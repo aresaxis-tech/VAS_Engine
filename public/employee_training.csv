@@ -1,0 +1,9 @@
+EmployeeID,Name,Department,LastTrainingDate,PhishingSimScore,PolicyAcceptance,AccessLevel
+EMP-101,Alice Johnson,Finance,2024-01-10,100%,Signed,Privileged
+EMP-102,Bob Williams,IT,2024-04-01,95%,Signed,Admin
+EMP-103,Charlie Brown,Sales,2023-05-15,40%,Expired,Standard
+EMP-104,Diana Prince,HR,2024-02-20,80%,Signed,Standard
+EMP-105,Evan Wright,Engineering,2024-03-10,100%,Signed,Privileged
+EMP-106,Fiona Green,Marketing,2023-11-01,60%,Signed,Standard
+EMP-107,George Hall,Operations,2022-12-10,0% (Missed),Expired,Standard
+EMP-108,Hannah Lee,Executive,2024-01-05,90%,Signed,Privileged

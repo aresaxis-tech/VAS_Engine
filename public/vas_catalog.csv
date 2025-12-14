@@ -1,0 +1,9 @@
+ServiceID,Category,ServiceName,Provider,Description,pricing_model,impact_metric
+VAS-001,Detection,Managed SOC (MDR),CrowdStrike,24/7 Endpoint monitoring and response,Per Endpoint/Month,-35% Breach Risk
+VAS-002,Assessment,Cyber Risk Audit,KPMG,Comprehensive gap analysis and compliance check,Fixed Fee,-15% Liability
+VAS-003,IoT,Industrial IoT Security,Claroty,Deep packet inspection for OT/IoT networks,Per Site/Year,-40% Operational Downtime
+VAS-004,Training,Phishing Simulation,KnowBe4,Monthly campaigns and learning modules,Per User/Year,-50% Human Error
+VAS-005,Identity,MFA & SSO Implementation,Okta,Zero-trust identity management,Per User/Month,-80% Credential Theft
+VAS-006,Resilience,Backup & Disaster Recovery,Veeam,Automated immutable backups,Per TB/Month,Ransomware Recovery < 4hrs
+VAS-007,Network,SASE / Cloud Firewall,Zscaler,Secure access for remote workforce,Per User/Year,-25% Network Attacks
+VAS-008,IoT,Firmware Lifecycle Mgmt,Sternum,Automated patching for embedded devices,Per Device/Year,-30% Vulnerability Age

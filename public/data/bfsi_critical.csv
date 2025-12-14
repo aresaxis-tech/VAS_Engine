@@ -1,0 +1,51 @@
+DeviceID,DeviceType,Manufacturer,Model,FirmwareVersion,LastPatched,Location,NetworkSegment,AuthMethod,Encryption,OpenPorts,TrafficAnomaly,Criticality,Status,RiskFactor
+BFS-1000,Biometric Scanner,Diebold,Model-Z32,v0.9,2021-01-01,Zone-1,Public-Wifi,DefaultPassword,None,"23, 80, 445",High Outbound,Critical,Compromised,AuthWeakness
+BFS-1001,Video Surveillance,Cisco,Model-X58,v0.0,2021-01-01,Zone-1,Corporate-LAN,DefaultPassword,None,"23, 80, 445",High Outbound,Critical,Compromised,AuthWeakness
+BFS-1002,ATM Controller,Cisco,Model-X64,v4.3,2021-01-01,Zone-1,Public-Wifi,DefaultPassword,None,"23, 80, 445",High Outbound,Critical,Compromised,AuthWeakness
+BFS-1003,Branch Router,Diebold,Model-X75,v0.2,2021-01-01,Zone-1,Corporate-LAN,DefaultPassword,None,"23, 80, 445",High Outbound,Critical,Compromised,AuthWeakness
+BFS-1004,Biometric Scanner,Diebold,Model-X87,v4.6,2021-01-01,Zone-1,Public-Wifi,DefaultPassword,None,"23, 80, 445",High Outbound,Critical,Compromised,AuthWeakness
+BFS-1005,Biometric Scanner,Diebold,Model-X93,v2.1,2021-01-01,Zone-1,Corporate-LAN,DefaultPassword,None,"23, 80, 445",High Outbound,Critical,Compromised,AuthWeakness
+BFS-1006,ATM Controller,NCR,Model-X28,v0.6,2021-01-01,Zone-1,Public-Wifi,DefaultPassword,None,"23, 80, 445",High Outbound,Critical,Compromised,AuthWeakness
+BFS-1007,Biometric Scanner,NCR,Model-X53,v3.9,2021-01-01,Zone-1,Corporate-LAN,DefaultPassword,None,"23, 80, 445",High Outbound,Critical,Compromised,AuthWeakness
+BFS-1008,Branch Router,NCR,Model-X7,v2.9,2021-01-01,Zone-1,Public-Wifi,DefaultPassword,None,"23, 80, 445",High Outbound,Critical,Compromised,AuthWeakness
+BFS-1009,ATM Controller,Hikvision,Model-Y91,v3.8,2021-01-01,Zone-1,Corporate-LAN,DefaultPassword,None,"23, 80, 445",High Outbound,Critical,Compromised,AuthWeakness
+BFS-1010,Branch Router,Cisco,Model-Z21,v3.5,2021-01-01,Zone-2,Public-Wifi,DefaultPassword,None,"23, 80, 445",High Outbound,Critical,Compromised,AuthWeakness
+BFS-1011,Video Surveillance,Hikvision,Model-Z93,v2.9,2021-01-01,Zone-2,Corporate-LAN,DefaultPassword,None,"23, 80, 445",High Outbound,Critical,Compromised,AuthWeakness
+BFS-1012,ATM Controller,NCR,Model-Z29,v4.8,2021-01-01,Zone-2,Public-Wifi,DefaultPassword,None,"23, 80, 445",High Outbound,Critical,Compromised,AuthWeakness
+BFS-1013,Branch Router,Diebold,Model-Z96,v0.1,2021-01-01,Zone-2,Corporate-LAN,DefaultPassword,None,"23, 80, 445",High Outbound,Critical,Compromised,AuthWeakness
+BFS-1014,Branch Router,Diebold,Model-X0,v0.1,2021-01-01,Zone-2,Public-Wifi,DefaultPassword,None,"23, 80, 445",High Outbound,Critical,Compromised,AuthWeakness
+BFS-1015,Cash Recycler,Diebold,Model-Z48,v4.0,2022-05-15,Zone-2,VLAN-10,WeakPassword,WEP,"80",None,High,Warning,VulnerableFirmware
+BFS-1016,Cash Recycler,NCR,Model-Z74,v4.2,2022-05-15,Zone-2,VLAN-10,WeakPassword,WEP,"80",None,High,Warning,VulnerableFirmware
+BFS-1017,ATM Controller,Hikvision,Model-Z37,v1.3,2022-05-15,Zone-2,VLAN-10,WeakPassword,WEP,"80",None,High,Warning,VulnerableFirmware
+BFS-1018,Branch Router,Diebold,Model-Y8,v1.4,2022-05-15,Zone-2,VLAN-10,WeakPassword,WEP,"80",None,High,Warning,VulnerableFirmware
+BFS-1019,Cash Recycler,NCR,Model-Z45,v1.2,2022-05-15,Zone-2,VLAN-10,WeakPassword,WEP,"80",None,High,Warning,VulnerableFirmware
+BFS-1020,ATM Controller,Diebold,Model-Y95,v3.8,2022-05-15,Zone-3,VLAN-10,WeakPassword,WEP,"80",None,High,Warning,VulnerableFirmware
+BFS-1021,ATM Controller,Hikvision,Model-Y27,v0.8,2022-05-15,Zone-3,VLAN-10,WeakPassword,WEP,"80",None,High,Warning,VulnerableFirmware
+BFS-1022,Biometric Scanner,Cisco,Model-X54,v3.5,2022-05-15,Zone-3,VLAN-10,WeakPassword,WEP,"80",None,High,Warning,VulnerableFirmware
+BFS-1023,ATM Controller,Cisco,Model-Y98,v2.2,2022-05-15,Zone-3,VLAN-10,WeakPassword,WEP,"80",None,High,Warning,VulnerableFirmware
+BFS-1024,Cash Recycler,NCR,Model-Y74,v0.8,2022-05-15,Zone-3,VLAN-10,WeakPassword,WEP,"80",None,High,Warning,VulnerableFirmware
+BFS-1025,Branch Router,Diebold,Model-X74,v3.1,2025-12-11,Zone-3,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+BFS-1026,Cash Recycler,Cisco,Model-X99,v0.9,2025-12-11,Zone-3,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+BFS-1027,ATM Controller,Cisco,Model-Y46,v1.0,2025-12-11,Zone-3,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+BFS-1028,Cash Recycler,Hikvision,Model-Y13,v2.8,2025-12-11,Zone-3,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+BFS-1029,Branch Router,Diebold,Model-Y95,v1.6,2025-12-11,Zone-3,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+BFS-1030,ATM Controller,Cisco,Model-Y67,v0.7,2025-12-11,Zone-4,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+BFS-1031,ATM Controller,Hikvision,Model-Y93,v0.0,2025-12-11,Zone-4,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+BFS-1032,Video Surveillance,NCR,Model-Y67,v1.5,2025-12-11,Zone-4,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+BFS-1033,Cash Recycler,Hikvision,Model-Z53,v2.7,2025-12-11,Zone-4,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+BFS-1034,Branch Router,Diebold,Model-X57,v2.3,2025-12-11,Zone-4,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+BFS-1035,Biometric Scanner,Hikvision,Model-X39,v2.0,2025-12-11,Zone-4,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+BFS-1036,Biometric Scanner,Cisco,Model-Y72,v2.0,2025-12-11,Zone-4,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+BFS-1037,Video Surveillance,Cisco,Model-Y30,v2.7,2025-12-11,Zone-4,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+BFS-1038,ATM Controller,Hikvision,Model-Z27,v0.7,2025-12-11,Zone-4,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+BFS-1039,Video Surveillance,Hikvision,Model-X26,v0.8,2025-12-11,Zone-4,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+BFS-1040,ATM Controller,Hikvision,Model-Z52,v3.9,2025-12-11,Zone-5,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+BFS-1041,Biometric Scanner,NCR,Model-X31,v2.1,2025-12-11,Zone-5,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+BFS-1042,ATM Controller,Diebold,Model-Y99,v1.1,2025-12-11,Zone-5,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+BFS-1043,Cash Recycler,Hikvision,Model-Y86,v2.9,2025-12-11,Zone-5,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+BFS-1044,Video Surveillance,NCR,Model-X81,v0.5,2025-12-11,Zone-5,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+BFS-1045,ATM Controller,Hikvision,Model-X99,v1.5,2025-12-11,Zone-5,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+BFS-1046,Cash Recycler,Cisco,Model-X45,v1.7,2025-12-11,Zone-5,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+BFS-1047,Cash Recycler,Hikvision,Model-X77,v3.7,2025-12-11,Zone-5,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+BFS-1048,Branch Router,Diebold,Model-Y62,v2.8,2025-12-11,Zone-5,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+BFS-1049,Branch Router,Cisco,Model-Z85,v1.0,2025-12-11,Zone-5,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None

@@ -1,0 +1,9 @@
+DeviceID,DeviceType,Manufacturer,Model,FirmwareVersion,LastPatched,Location,NetworkSegment,AuthMethod,Encryption,OpenPorts,TrafficAnomaly,Criticality,Status,RiskFactor
+IOT-001,Smart Camera,Hikvision,DS-2CD,v2.1.0,2023-01-01,Lobby,Public-Wifi,DefaultPassword,None,80;554,High,High,Active,AuthWeakness
+IOT-002,Industrial Controller,Siemens,S7-1200,v0.9.1,2022-05-20,Factory Floor,VLAN-20,WeakPassword,None,102;502,Normal,Critical,Warning,VulnerableFirmware
+IOT-003,Gateway Hub,Cisco,IR1101,v4.1.2,2023-01-10,Main Office,VLAN-10,StrongPassword,SSH,22,High,High,Vulnerable,OutdatedPatch
+IOT-004,Smart Meter,Schneider,PM5000,v3.0.1,2024-02-01,Utility Room,VLAN-10,Certificate,TLS1.3,443,Normal,Medium,Active,None
+IOT-005,RFID Reader,Zebra,FX7500,v1.4.5,2024-01-20,Dock 1,VLAN-20,WPA2-PSK,WPA2,None,Normal,Low,Active,None
+IOT-006,Production Robot,Fanuc,R-2000iC,v3.2.0,2023-09-01,Line 1,VLAN-20,DefaultPassword,None,21;23;80,Normal,Critical,Active,AuthWeakness
+IOT-007,HVAC Controller,Johnson Controls,Metasys,v1.2.0,2023-11-12,Roof,VLAN-30,WeakPassword,None,80,Normal,Medium,Active,None
+IOT-008,Medical Pump,Baxter,Sigma,v1.0.5,2022-12-01,ICU,VLAN-MED,None,None,23,Normal,Critical,Warning,VulnerableFirmware

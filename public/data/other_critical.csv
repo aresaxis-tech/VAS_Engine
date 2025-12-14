@@ -1,0 +1,51 @@
+DeviceID,DeviceType,Manufacturer,Model,FirmwareVersion,LastPatched,Location,NetworkSegment,AuthMethod,Encryption,OpenPorts,TrafficAnomaly,Criticality,Status,RiskFactor
+OTH-1000,Access Control,Ring,Model-Y30,v3.4,2021-01-01,Zone-1,Public-Wifi,DefaultPassword,None,"23, 80, 445",High Outbound,Critical,Compromised,AuthWeakness
+OTH-1001,Access Control,HID,Model-Z98,v3.5,2021-01-01,Zone-1,Corporate-LAN,DefaultPassword,None,"23, 80, 445",High Outbound,Critical,Compromised,AuthWeakness
+OTH-1002,Smart Thermostat,Ring,Model-Y71,v1.6,2021-01-01,Zone-1,Public-Wifi,DefaultPassword,None,"23, 80, 445",High Outbound,Critical,Compromised,AuthWeakness
+OTH-1003,VoIP Phone,Nest,Model-Y59,v3.0,2021-01-01,Zone-1,Corporate-LAN,DefaultPassword,None,"23, 80, 445",High Outbound,Critical,Compromised,AuthWeakness
+OTH-1004,Printer,HP,Model-Y89,v1.4,2021-01-01,Zone-1,Public-Wifi,DefaultPassword,None,"23, 80, 445",High Outbound,Critical,Compromised,AuthWeakness
+OTH-1005,Printer,Polycom,Model-Y33,v1.4,2021-01-01,Zone-1,Corporate-LAN,DefaultPassword,None,"23, 80, 445",High Outbound,Critical,Compromised,AuthWeakness
+OTH-1006,Access Control,Nest,Model-Z32,v0.3,2021-01-01,Zone-1,Public-Wifi,DefaultPassword,None,"23, 80, 445",High Outbound,Critical,Compromised,AuthWeakness
+OTH-1007,Security Camera,Polycom,Model-Y66,v4.3,2021-01-01,Zone-1,Corporate-LAN,DefaultPassword,None,"23, 80, 445",High Outbound,Critical,Compromised,AuthWeakness
+OTH-1008,Printer,Ring,Model-Z56,v2.2,2021-01-01,Zone-1,Public-Wifi,DefaultPassword,None,"23, 80, 445",High Outbound,Critical,Compromised,AuthWeakness
+OTH-1009,Smart Thermostat,Polycom,Model-Z80,v0.5,2021-01-01,Zone-1,Corporate-LAN,DefaultPassword,None,"23, 80, 445",High Outbound,Critical,Compromised,AuthWeakness
+OTH-1010,Printer,HID,Model-Z31,v2.6,2021-01-01,Zone-2,Public-Wifi,DefaultPassword,None,"23, 80, 445",High Outbound,Critical,Compromised,AuthWeakness
+OTH-1011,Printer,Ring,Model-Y51,v4.3,2021-01-01,Zone-2,Corporate-LAN,DefaultPassword,None,"23, 80, 445",High Outbound,Critical,Compromised,AuthWeakness
+OTH-1012,Access Control,Nest,Model-X50,v4.9,2021-01-01,Zone-2,Public-Wifi,DefaultPassword,None,"23, 80, 445",High Outbound,Critical,Compromised,AuthWeakness
+OTH-1013,Smart Thermostat,HID,Model-Y53,v3.5,2021-01-01,Zone-2,Corporate-LAN,DefaultPassword,None,"23, 80, 445",High Outbound,Critical,Compromised,AuthWeakness
+OTH-1014,Smart Thermostat,Polycom,Model-X29,v4.4,2021-01-01,Zone-2,Public-Wifi,DefaultPassword,None,"23, 80, 445",High Outbound,Critical,Compromised,AuthWeakness
+OTH-1015,Printer,Polycom,Model-X63,v0.5,2022-05-15,Zone-2,VLAN-10,WeakPassword,WEP,"80",None,High,Warning,VulnerableFirmware
+OTH-1016,Smart Thermostat,HID,Model-Z39,v2.5,2022-05-15,Zone-2,VLAN-10,WeakPassword,WEP,"80",None,High,Warning,VulnerableFirmware
+OTH-1017,VoIP Phone,Ring,Model-Z51,v0.4,2022-05-15,Zone-2,VLAN-10,WeakPassword,WEP,"80",None,High,Warning,VulnerableFirmware
+OTH-1018,Security Camera,Nest,Model-Z14,v0.6,2022-05-15,Zone-2,VLAN-10,WeakPassword,WEP,"80",None,High,Warning,VulnerableFirmware
+OTH-1019,VoIP Phone,Polycom,Model-Y28,v3.7,2022-05-15,Zone-2,VLAN-10,WeakPassword,WEP,"80",None,High,Warning,VulnerableFirmware
+OTH-1020,Access Control,Polycom,Model-X24,v1.0,2022-05-15,Zone-3,VLAN-10,WeakPassword,WEP,"80",None,High,Warning,VulnerableFirmware
+OTH-1021,Security Camera,HP,Model-Z89,v3.4,2022-05-15,Zone-3,VLAN-10,WeakPassword,WEP,"80",None,High,Warning,VulnerableFirmware
+OTH-1022,Access Control,HP,Model-Z98,v2.4,2022-05-15,Zone-3,VLAN-10,WeakPassword,WEP,"80",None,High,Warning,VulnerableFirmware
+OTH-1023,Printer,HID,Model-X96,v2.7,2022-05-15,Zone-3,VLAN-10,WeakPassword,WEP,"80",None,High,Warning,VulnerableFirmware
+OTH-1024,VoIP Phone,Nest,Model-Z51,v3.4,2022-05-15,Zone-3,VLAN-10,WeakPassword,WEP,"80",None,High,Warning,VulnerableFirmware
+OTH-1025,VoIP Phone,HP,Model-Z11,v3.0,2025-12-11,Zone-3,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+OTH-1026,Smart Thermostat,HID,Model-Y3,v0.4,2025-12-11,Zone-3,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+OTH-1027,Security Camera,HP,Model-X5,v1.8,2025-12-11,Zone-3,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+OTH-1028,Printer,Ring,Model-Y23,v1.5,2025-12-11,Zone-3,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+OTH-1029,Smart Thermostat,Ring,Model-Z70,v3.7,2025-12-11,Zone-3,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+OTH-1030,VoIP Phone,Ring,Model-X56,v3.1,2025-12-11,Zone-4,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+OTH-1031,Security Camera,HID,Model-Y58,v0.0,2025-12-11,Zone-4,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+OTH-1032,Printer,HID,Model-Z30,v3.5,2025-12-11,Zone-4,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+OTH-1033,Smart Thermostat,HP,Model-X11,v3.4,2025-12-11,Zone-4,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+OTH-1034,Security Camera,Ring,Model-Z86,v0.4,2025-12-11,Zone-4,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+OTH-1035,VoIP Phone,HP,Model-Y92,v0.6,2025-12-11,Zone-4,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+OTH-1036,Security Camera,HP,Model-Y9,v3.2,2025-12-11,Zone-4,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+OTH-1037,Printer,HID,Model-Z54,v3.9,2025-12-11,Zone-4,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+OTH-1038,VoIP Phone,Polycom,Model-X90,v3.6,2025-12-11,Zone-4,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+OTH-1039,VoIP Phone,Nest,Model-Y25,v2.9,2025-12-11,Zone-4,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+OTH-1040,Printer,HP,Model-Y46,v2.4,2025-12-11,Zone-5,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+OTH-1041,VoIP Phone,HP,Model-Y51,v3.8,2025-12-11,Zone-5,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+OTH-1042,VoIP Phone,Nest,Model-X89,v2.0,2025-12-11,Zone-5,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+OTH-1043,Smart Thermostat,Nest,Model-Y9,v3.1,2025-12-11,Zone-5,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+OTH-1044,Access Control,Polycom,Model-Z71,v3.5,2025-12-11,Zone-5,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+OTH-1045,Printer,Ring,Model-X18,v3.7,2025-12-11,Zone-5,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+OTH-1046,Printer,Polycom,Model-X18,v1.5,2025-12-11,Zone-5,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+OTH-1047,Security Camera,Ring,Model-Z93,v2.2,2025-12-11,Zone-5,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+OTH-1048,Printer,Ring,Model-X15,v3.0,2025-12-11,Zone-5,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+OTH-1049,VoIP Phone,Polycom,Model-Y74,v3.8,2025-12-11,Zone-5,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None

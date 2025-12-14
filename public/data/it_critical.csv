@@ -1,0 +1,51 @@
+DeviceID,DeviceType,Manufacturer,Model,FirmwareVersion,LastPatched,Location,NetworkSegment,AuthMethod,Encryption,OpenPorts,TrafficAnomaly,Criticality,Status,RiskFactor
+IT-1000,Conference Room Hub,Aruba,Model-Y80,v4.5,2021-01-01,Zone-1,Public-Wifi,DefaultPassword,None,"23, 80, 445",High Outbound,Critical,Compromised,AuthWeakness
+IT-1001,Conference Room Hub,Aruba,Model-Z5,v1.8,2021-01-01,Zone-1,Corporate-LAN,DefaultPassword,None,"23, 80, 445",High Outbound,Critical,Compromised,AuthWeakness
+IT-1002,Server Rack,Cisco,Model-Y68,v3.0,2021-01-01,Zone-1,Public-Wifi,DefaultPassword,None,"23, 80, 445",High Outbound,Critical,Compromised,AuthWeakness
+IT-1003,Smart UPS,APC,Model-Y85,v1.5,2021-01-01,Zone-1,Corporate-LAN,DefaultPassword,None,"23, 80, 445",High Outbound,Critical,Compromised,AuthWeakness
+IT-1004,Network Switch,Aruba,Model-X39,v2.2,2021-01-01,Zone-1,Public-Wifi,DefaultPassword,None,"23, 80, 445",High Outbound,Critical,Compromised,AuthWeakness
+IT-1005,Wifi Access Point,Dell,Model-Z39,v3.9,2021-01-01,Zone-1,Corporate-LAN,DefaultPassword,None,"23, 80, 445",High Outbound,Critical,Compromised,AuthWeakness
+IT-1006,Smart UPS,Dell,Model-Y70,v2.4,2021-01-01,Zone-1,Public-Wifi,DefaultPassword,None,"23, 80, 445",High Outbound,Critical,Compromised,AuthWeakness
+IT-1007,Network Switch,Cisco,Model-Y96,v4.5,2021-01-01,Zone-1,Corporate-LAN,DefaultPassword,None,"23, 80, 445",High Outbound,Critical,Compromised,AuthWeakness
+IT-1008,Server Rack,APC,Model-X50,v4.3,2021-01-01,Zone-1,Public-Wifi,DefaultPassword,None,"23, 80, 445",High Outbound,Critical,Compromised,AuthWeakness
+IT-1009,Wifi Access Point,Dell,Model-Z56,v2.9,2021-01-01,Zone-1,Corporate-LAN,DefaultPassword,None,"23, 80, 445",High Outbound,Critical,Compromised,AuthWeakness
+IT-1010,Conference Room Hub,APC,Model-X25,v4.1,2021-01-01,Zone-2,Public-Wifi,DefaultPassword,None,"23, 80, 445",High Outbound,Critical,Compromised,AuthWeakness
+IT-1011,Conference Room Hub,Cisco,Model-Z7,v0.4,2021-01-01,Zone-2,Corporate-LAN,DefaultPassword,None,"23, 80, 445",High Outbound,Critical,Compromised,AuthWeakness
+IT-1012,Wifi Access Point,APC,Model-Y47,v2.7,2021-01-01,Zone-2,Public-Wifi,DefaultPassword,None,"23, 80, 445",High Outbound,Critical,Compromised,AuthWeakness
+IT-1013,Wifi Access Point,APC,Model-Z28,v4.7,2021-01-01,Zone-2,Corporate-LAN,DefaultPassword,None,"23, 80, 445",High Outbound,Critical,Compromised,AuthWeakness
+IT-1014,Conference Room Hub,Aruba,Model-Z89,v2.6,2021-01-01,Zone-2,Public-Wifi,DefaultPassword,None,"23, 80, 445",High Outbound,Critical,Compromised,AuthWeakness
+IT-1015,Wifi Access Point,Cisco,Model-X33,v4.3,2022-05-15,Zone-2,VLAN-10,WeakPassword,WEP,"80",None,High,Warning,VulnerableFirmware
+IT-1016,Wifi Access Point,APC,Model-Y66,v1.7,2022-05-15,Zone-2,VLAN-10,WeakPassword,WEP,"80",None,High,Warning,VulnerableFirmware
+IT-1017,Conference Room Hub,Dell,Model-Y74,v0.7,2022-05-15,Zone-2,VLAN-10,WeakPassword,WEP,"80",None,High,Warning,VulnerableFirmware
+IT-1018,Server Rack,APC,Model-X4,v1.1,2022-05-15,Zone-2,VLAN-10,WeakPassword,WEP,"80",None,High,Warning,VulnerableFirmware
+IT-1019,Wifi Access Point,Aruba,Model-Y6,v2.1,2022-05-15,Zone-2,VLAN-10,WeakPassword,WEP,"80",None,High,Warning,VulnerableFirmware
+IT-1020,Server Rack,Cisco,Model-Z43,v4.6,2022-05-15,Zone-3,VLAN-10,WeakPassword,WEP,"80",None,High,Warning,VulnerableFirmware
+IT-1021,Smart UPS,Aruba,Model-Y3,v2.5,2022-05-15,Zone-3,VLAN-10,WeakPassword,WEP,"80",None,High,Warning,VulnerableFirmware
+IT-1022,Conference Room Hub,Aruba,Model-Y61,v4.7,2022-05-15,Zone-3,VLAN-10,WeakPassword,WEP,"80",None,High,Warning,VulnerableFirmware
+IT-1023,Network Switch,Dell,Model-Z86,v3.0,2022-05-15,Zone-3,VLAN-10,WeakPassword,WEP,"80",None,High,Warning,VulnerableFirmware
+IT-1024,Wifi Access Point,Dell,Model-Y63,v3.2,2022-05-15,Zone-3,VLAN-10,WeakPassword,WEP,"80",None,High,Warning,VulnerableFirmware
+IT-1025,Network Switch,Dell,Model-Y60,v0.8,2025-12-11,Zone-3,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+IT-1026,Network Switch,Cisco,Model-Y89,v3.4,2025-12-11,Zone-3,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+IT-1027,Server Rack,Aruba,Model-X98,v2.0,2025-12-11,Zone-3,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+IT-1028,Conference Room Hub,Dell,Model-Y94,v2.1,2025-12-11,Zone-3,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+IT-1029,Network Switch,Aruba,Model-Z52,v3.1,2025-12-11,Zone-3,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+IT-1030,Server Rack,Dell,Model-Z18,v0.1,2025-12-11,Zone-4,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+IT-1031,Conference Room Hub,Aruba,Model-Z24,v4.7,2025-12-11,Zone-4,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+IT-1032,Conference Room Hub,Dell,Model-Z20,v1.2,2025-12-11,Zone-4,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+IT-1033,Wifi Access Point,Dell,Model-Y45,v1.6,2025-12-11,Zone-4,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+IT-1034,Network Switch,Aruba,Model-Y78,v1.5,2025-12-11,Zone-4,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+IT-1035,Smart UPS,APC,Model-Z29,v2.7,2025-12-11,Zone-4,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+IT-1036,Network Switch,Dell,Model-X71,v1.2,2025-12-11,Zone-4,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+IT-1037,Server Rack,Aruba,Model-X31,v2.5,2025-12-11,Zone-4,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+IT-1038,Conference Room Hub,APC,Model-Z46,v1.6,2025-12-11,Zone-4,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+IT-1039,Wifi Access Point,Aruba,Model-Y54,v4.5,2025-12-11,Zone-4,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+IT-1040,Conference Room Hub,APC,Model-X72,v2.7,2025-12-11,Zone-5,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+IT-1041,Server Rack,Aruba,Model-X38,v1.6,2025-12-11,Zone-5,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+IT-1042,Wifi Access Point,Aruba,Model-Y24,v4.2,2025-12-11,Zone-5,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+IT-1043,Server Rack,Dell,Model-X48,v0.3,2025-12-11,Zone-5,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+IT-1044,Server Rack,APC,Model-Y34,v0.2,2025-12-11,Zone-5,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+IT-1045,Conference Room Hub,Aruba,Model-Z0,v3.7,2025-12-11,Zone-5,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+IT-1046,Wifi Access Point,Cisco,Model-X3,v2.4,2025-12-11,Zone-5,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+IT-1047,Network Switch,Cisco,Model-Z28,v4.4,2025-12-11,Zone-5,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+IT-1048,Server Rack,Dell,Model-X64,v2.3,2025-12-11,Zone-5,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+IT-1049,Network Switch,Aruba,Model-Z51,v0.4,2025-12-11,Zone-5,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None

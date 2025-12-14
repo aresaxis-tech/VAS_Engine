@@ -1,0 +1,51 @@
+DeviceID,DeviceType,Manufacturer,Model,FirmwareVersion,LastPatched,Location,NetworkSegment,AuthMethod,Encryption,OpenPorts,TrafficAnomaly,Criticality,Status,RiskFactor
+MAN-1000,HVAC Controller,Fanuc,Model-Y48,v0.8,2025-12-11,Zone-1,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+MAN-1001,Conveyor Sensor,Rockwell,Model-Z48,v4.2,2025-12-11,Zone-1,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+MAN-1002,CNC Machine,Siemens,Model-Y42,v1.6,2025-12-11,Zone-1,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+MAN-1003,HVAC Controller,Fanuc,Model-Y69,v2.1,2025-12-11,Zone-1,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+MAN-1004,Conveyor Sensor,Schneider Electric,Model-Z24,v3.0,2025-12-11,Zone-1,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+MAN-1005,HVAC Controller,Siemens,Model-X28,v4.3,2025-12-11,Zone-1,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+MAN-1006,PLC Controller,Fanuc,Model-Y92,v2.7,2025-12-11,Zone-1,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+MAN-1007,PLC Controller,Rockwell,Model-Z47,v2.8,2025-12-11,Zone-1,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+MAN-1008,Industrial Gateway,Rockwell,Model-X78,v3.9,2025-12-11,Zone-1,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+MAN-1009,HVAC Controller,Siemens,Model-X70,v2.4,2025-12-11,Zone-1,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+MAN-1010,Industrial Gateway,Fanuc,Model-X16,v2.2,2025-12-11,Zone-2,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+MAN-1011,Industrial Gateway,Siemens,Model-X9,v0.4,2025-12-11,Zone-2,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+MAN-1012,CNC Machine,Schneider Electric,Model-Y47,v0.1,2025-12-11,Zone-2,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+MAN-1013,Robotic Arm,Fanuc,Model-X91,v3.8,2025-12-11,Zone-2,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+MAN-1014,PLC Controller,Siemens,Model-Y72,v1.4,2025-12-11,Zone-2,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+MAN-1015,Robotic Arm,Rockwell,Model-X55,v0.6,2025-12-11,Zone-2,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+MAN-1016,Conveyor Sensor,Rockwell,Model-Z73,v4.0,2025-12-11,Zone-2,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+MAN-1017,PLC Controller,Rockwell,Model-X32,v0.1,2025-12-11,Zone-2,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+MAN-1018,Robotic Arm,Schneider Electric,Model-X1,v1.9,2025-12-11,Zone-2,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+MAN-1019,Industrial Gateway,Rockwell,Model-Z55,v1.6,2025-12-11,Zone-2,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+MAN-1020,HVAC Controller,Schneider Electric,Model-Y4,v3.9,2025-12-11,Zone-3,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+MAN-1021,Robotic Arm,Schneider Electric,Model-Z98,v4.2,2025-12-11,Zone-3,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+MAN-1022,Conveyor Sensor,Rockwell,Model-X20,v1.5,2025-12-11,Zone-3,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+MAN-1023,PLC Controller,Siemens,Model-Y18,v1.2,2025-12-11,Zone-3,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+MAN-1024,PLC Controller,Rockwell,Model-Y9,v3.8,2025-12-11,Zone-3,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+MAN-1025,Robotic Arm,Schneider Electric,Model-Y82,v2.7,2025-12-11,Zone-3,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+MAN-1026,CNC Machine,Schneider Electric,Model-X94,v1.8,2025-12-11,Zone-3,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+MAN-1027,Robotic Arm,Siemens,Model-X87,v2.0,2025-12-11,Zone-3,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+MAN-1028,Industrial Gateway,Fanuc,Model-X95,v0.6,2025-12-11,Zone-3,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+MAN-1029,HVAC Controller,Schneider Electric,Model-X53,v0.7,2025-12-11,Zone-3,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+MAN-1030,HVAC Controller,Schneider Electric,Model-X47,v3.1,2025-12-11,Zone-4,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+MAN-1031,Industrial Gateway,Fanuc,Model-Z22,v4.1,2025-12-11,Zone-4,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+MAN-1032,Industrial Gateway,Rockwell,Model-Z80,v1.4,2025-12-11,Zone-4,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+MAN-1033,HVAC Controller,Siemens,Model-Y4,v0.8,2025-12-11,Zone-4,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+MAN-1034,Conveyor Sensor,Schneider Electric,Model-Y85,v3.4,2025-12-11,Zone-4,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+MAN-1035,HVAC Controller,Fanuc,Model-Z33,v4.3,2025-12-11,Zone-4,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+MAN-1036,Robotic Arm,Rockwell,Model-Z83,v4.5,2025-12-11,Zone-4,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+MAN-1037,Industrial Gateway,Schneider Electric,Model-Y66,v1.1,2025-12-11,Zone-4,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+MAN-1038,PLC Controller,Schneider Electric,Model-Y85,v1.6,2025-12-11,Zone-4,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+MAN-1039,Industrial Gateway,Fanuc,Model-Y84,v0.3,2025-12-11,Zone-4,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+MAN-1040,Conveyor Sensor,Fanuc,Model-Z48,v1.8,2025-12-11,Zone-5,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+MAN-1041,Industrial Gateway,Rockwell,Model-Z44,v1.3,2025-12-11,Zone-5,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+MAN-1042,HVAC Controller,Fanuc,Model-Y46,v3.0,2025-12-11,Zone-5,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+MAN-1043,HVAC Controller,Schneider Electric,Model-Z18,v2.0,2025-12-11,Zone-5,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+MAN-1044,HVAC Controller,Siemens,Model-Y31,v0.2,2025-12-11,Zone-5,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+MAN-1045,HVAC Controller,Rockwell,Model-Y60,v4.6,2025-12-11,Zone-5,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+MAN-1046,CNC Machine,Fanuc,Model-Y67,v3.1,2025-12-11,Zone-5,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+MAN-1047,Industrial Gateway,Rockwell,Model-X42,v1.2,2025-12-11,Zone-5,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+MAN-1048,PLC Controller,Rockwell,Model-Y94,v2.8,2025-12-11,Zone-5,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+MAN-1049,Robotic Arm,Rockwell,Model-Z88,v4.3,2025-12-11,Zone-5,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None

@@ -1,0 +1,51 @@
+DeviceID,DeviceType,Manufacturer,Model,FirmwareVersion,LastPatched,Location,NetworkSegment,AuthMethod,Encryption,OpenPorts,TrafficAnomaly,Criticality,Status,RiskFactor
+RET-1000,Digital Signage,Toshiba,Model-Y1,v3.3,2021-01-01,Zone-1,Public-Wifi,DefaultPassword,None,"23, 80, 445",High Outbound,Critical,Compromised,AuthWeakness
+RET-1001,Inventory Scanner,Verifone,Model-Z95,v4.0,2021-01-01,Zone-1,Corporate-LAN,DefaultPassword,None,"23, 80, 445",High Outbound,Critical,Compromised,AuthWeakness
+RET-1002,Inventory Scanner,Verifone,Model-Y58,v3.7,2021-01-01,Zone-1,Public-Wifi,DefaultPassword,None,"23, 80, 445",High Outbound,Critical,Compromised,AuthWeakness
+RET-1003,Inventory Scanner,Verifone,Model-Y54,v3.5,2021-01-01,Zone-1,Corporate-LAN,DefaultPassword,None,"23, 80, 445",High Outbound,Critical,Compromised,AuthWeakness
+RET-1004,Inventory Scanner,Toshiba,Model-X76,v2.2,2021-01-01,Zone-1,Public-Wifi,DefaultPassword,None,"23, 80, 445",High Outbound,Critical,Compromised,AuthWeakness
+RET-1005,Inventory Scanner,Toshiba,Model-X32,v4.5,2021-01-01,Zone-1,Corporate-LAN,DefaultPassword,None,"23, 80, 445",High Outbound,Critical,Compromised,AuthWeakness
+RET-1006,Digital Signage,Verifone,Model-X41,v4.2,2021-01-01,Zone-1,Public-Wifi,DefaultPassword,None,"23, 80, 445",High Outbound,Critical,Compromised,AuthWeakness
+RET-1007,Digital Signage,Samsung,Model-Z74,v1.3,2021-01-01,Zone-1,Corporate-LAN,DefaultPassword,None,"23, 80, 445",High Outbound,Critical,Compromised,AuthWeakness
+RET-1008,Self-Checkout Kiosk,Samsung,Model-Z54,v3.2,2021-01-01,Zone-1,Public-Wifi,DefaultPassword,None,"23, 80, 445",High Outbound,Critical,Compromised,AuthWeakness
+RET-1009,Smart Shelf,Verifone,Model-Y94,v4.6,2021-01-01,Zone-1,Corporate-LAN,DefaultPassword,None,"23, 80, 445",High Outbound,Critical,Compromised,AuthWeakness
+RET-1010,Smart Shelf,Zebra,Model-X67,v4.2,2021-01-01,Zone-2,Public-Wifi,DefaultPassword,None,"23, 80, 445",High Outbound,Critical,Compromised,AuthWeakness
+RET-1011,Digital Signage,Toshiba,Model-Z5,v1.2,2021-01-01,Zone-2,Corporate-LAN,DefaultPassword,None,"23, 80, 445",High Outbound,Critical,Compromised,AuthWeakness
+RET-1012,Inventory Scanner,Verifone,Model-Z24,v0.2,2021-01-01,Zone-2,Public-Wifi,DefaultPassword,None,"23, 80, 445",High Outbound,Critical,Compromised,AuthWeakness
+RET-1013,Smart Shelf,Verifone,Model-Z15,v3.3,2021-01-01,Zone-2,Corporate-LAN,DefaultPassword,None,"23, 80, 445",High Outbound,Critical,Compromised,AuthWeakness
+RET-1014,Inventory Scanner,Verifone,Model-Z30,v2.2,2021-01-01,Zone-2,Public-Wifi,DefaultPassword,None,"23, 80, 445",High Outbound,Critical,Compromised,AuthWeakness
+RET-1015,Inventory Scanner,Verifone,Model-X24,v2.6,2022-05-15,Zone-2,VLAN-10,WeakPassword,WEP,"80",None,High,Warning,VulnerableFirmware
+RET-1016,Inventory Scanner,Samsung,Model-Z81,v2.6,2022-05-15,Zone-2,VLAN-10,WeakPassword,WEP,"80",None,High,Warning,VulnerableFirmware
+RET-1017,Inventory Scanner,Toshiba,Model-X45,v4.0,2022-05-15,Zone-2,VLAN-10,WeakPassword,WEP,"80",None,High,Warning,VulnerableFirmware
+RET-1018,Smart Shelf,Toshiba,Model-X92,v4.3,2022-05-15,Zone-2,VLAN-10,WeakPassword,WEP,"80",None,High,Warning,VulnerableFirmware
+RET-1019,POS Terminal,Samsung,Model-Y81,v2.7,2022-05-15,Zone-2,VLAN-10,WeakPassword,WEP,"80",None,High,Warning,VulnerableFirmware
+RET-1020,Digital Signage,Toshiba,Model-Y99,v0.0,2022-05-15,Zone-3,VLAN-10,WeakPassword,WEP,"80",None,High,Warning,VulnerableFirmware
+RET-1021,Smart Shelf,Verifone,Model-Y32,v0.7,2022-05-15,Zone-3,VLAN-10,WeakPassword,WEP,"80",None,High,Warning,VulnerableFirmware
+RET-1022,POS Terminal,Toshiba,Model-Y36,v1.6,2022-05-15,Zone-3,VLAN-10,WeakPassword,WEP,"80",None,High,Warning,VulnerableFirmware
+RET-1023,Self-Checkout Kiosk,Zebra,Model-Z55,v0.5,2022-05-15,Zone-3,VLAN-10,WeakPassword,WEP,"80",None,High,Warning,VulnerableFirmware
+RET-1024,Inventory Scanner,Toshiba,Model-Y87,v0.9,2022-05-15,Zone-3,VLAN-10,WeakPassword,WEP,"80",None,High,Warning,VulnerableFirmware
+RET-1025,Self-Checkout Kiosk,Toshiba,Model-X4,v2.1,2025-12-11,Zone-3,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+RET-1026,Inventory Scanner,Samsung,Model-Y71,v0.6,2025-12-11,Zone-3,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+RET-1027,POS Terminal,Samsung,Model-Z18,v0.3,2025-12-11,Zone-3,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+RET-1028,Digital Signage,Zebra,Model-X27,v3.8,2025-12-11,Zone-3,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+RET-1029,Smart Shelf,Verifone,Model-Z8,v1.4,2025-12-11,Zone-3,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+RET-1030,POS Terminal,Verifone,Model-Z31,v3.4,2025-12-11,Zone-4,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+RET-1031,Inventory Scanner,Zebra,Model-Y21,v3.3,2025-12-11,Zone-4,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+RET-1032,Inventory Scanner,Verifone,Model-X82,v4.3,2025-12-11,Zone-4,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+RET-1033,Self-Checkout Kiosk,Verifone,Model-X36,v1.8,2025-12-11,Zone-4,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+RET-1034,POS Terminal,Verifone,Model-Z94,v0.0,2025-12-11,Zone-4,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+RET-1035,Digital Signage,Toshiba,Model-X33,v2.7,2025-12-11,Zone-4,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+RET-1036,POS Terminal,Samsung,Model-X12,v3.9,2025-12-11,Zone-4,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+RET-1037,Smart Shelf,Toshiba,Model-Z74,v2.0,2025-12-11,Zone-4,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+RET-1038,Self-Checkout Kiosk,Zebra,Model-Y89,v3.5,2025-12-11,Zone-4,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+RET-1039,Self-Checkout Kiosk,Samsung,Model-Y96,v1.8,2025-12-11,Zone-4,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+RET-1040,Inventory Scanner,Toshiba,Model-Y80,v0.0,2025-12-11,Zone-5,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+RET-1041,Digital Signage,Toshiba,Model-Z89,v3.2,2025-12-11,Zone-5,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+RET-1042,POS Terminal,Toshiba,Model-X75,v1.1,2025-12-11,Zone-5,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+RET-1043,Inventory Scanner,Verifone,Model-Y33,v4.2,2025-12-11,Zone-5,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+RET-1044,Inventory Scanner,Toshiba,Model-Z56,v3.4,2025-12-11,Zone-5,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+RET-1045,Smart Shelf,Samsung,Model-Z10,v2.0,2025-12-11,Zone-5,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+RET-1046,Smart Shelf,Samsung,Model-Z99,v2.6,2025-12-11,Zone-5,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+RET-1047,Inventory Scanner,Toshiba,Model-Y91,v1.6,2025-12-11,Zone-5,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+RET-1048,Digital Signage,Toshiba,Model-Z5,v0.1,2025-12-11,Zone-5,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+RET-1049,Inventory Scanner,Toshiba,Model-Z16,v0.2,2025-12-11,Zone-5,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
