@@ -10,8 +10,8 @@ process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
 const transcribeClient = new TranscribeStreamingClient({
     region: process.env.AWS_REGION || 'ap-south-1',
     credentials: {
-        accessKeyId: process.env.AWS_ACCESS_KEY_ID || 'AKIAVCN73S4N2BZGLKH2',
-        secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY || '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',
+        accessKeyId: process.env.VOICE_KEY_ID || '',
+        secretAccessKey: process.env.VOICE_KEY_SECRET || '',
     },
 });
 
