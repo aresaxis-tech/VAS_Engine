@@ -17,7 +17,7 @@ const industries = [
     { id: "other", name: "Other", icon: Cpu, color: "text-[var(--color-icici-orange)]" },
 ];
 
-export function IndustrySelection({ onSelect }: { onSelect: (industry: string) => void }) {
+export function IndustrySelection({ onSelect, voiceMode }: { onSelect: (industry: string) => void; voiceMode?: boolean }) {
     return (
         <div className="w-full max-w-7xl mx-auto px-4 pt-16 pb-2 flex flex-col justify-start h-full">
             <motion.div
@@ -27,6 +27,11 @@ export function IndustrySelection({ onSelect }: { onSelect: (industry: string) =
             >
                 <h2 className="text-3xl md:text-5xl font-bold mb-3">{UI_TEXT.selectIndustryTitle}</h2>
                 <p className="text-slate-400 text-base md:text-lg">{UI_TEXT.selectIndustrySubtitle}</p>
+                {voiceMode && (
+                    <p className="text-sm text-orange-400/80 animate-pulse mt-2">
+                        Say your industry name (e.g., "retail", "healthcare")
+                    </p>
+                )}
             </motion.div>
 
             <div className="w-full flex flex-col items-center gap-[3vmin]">

@@ -60,6 +60,10 @@ export const CyberAgentChat = ({ riskAnalysis, industry }: CyberAgentChatProps) 
         setIsLoading(true);
 
         try {
+            // Create AbortController to prevent duplicate requests
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 30000); // 30s timeout
+            
             const response = await fetch("/api/agent-chat", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
@@ -68,8 +72,15 @@ export const CyberAgentChat = ({ riskAnalysis, industry }: CyberAgentChatProps) 
                     userMessage: userMsg, // send latest specifically
                     context: riskAnalysis || { status: "No Data Available", msg: "Telemetry stream is currently idle." },
                     industry
-                })
+                }),
+                signal: controller.signal
             });
+            
+            clearTimeout(timeoutId);
+
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}`);
+            }
 
             const data = await response.json();
 
@@ -78,8 +89,12 @@ export const CyberAgentChat = ({ riskAnalysis, industry }: CyberAgentChatProps) 
             } else {
                 setMessages(prev => [...prev, { role: 'assistant', content: "Connection interrupted. Try again." }]);
             }
-        } catch (e) {
-            setMessages(prev => [...prev, { role: 'assistant', content: "Agent Offline." }]);
+        } catch (e: any) {
+            if (e.name === 'AbortError') {
+                setMessages(prev => [...prev, { role: 'assistant', content: "Request timeout. Please try again." }]);
+            } else {
+                setMessages(prev => [...prev, { role: 'assistant', content: "Agent Offline." }]);
+            }
         } finally {
             setIsLoading(false);
         }
@@ -136,6 +151,12 @@ export const CyberAgentChat = ({ riskAnalysis, industry }: CyberAgentChatProps) 
     };
 
     const handleAnswer = (qid: string, value: any) => {
+        // Prevent duplicate answers
+        if (answers[qid] !== undefined) {
+            console.log('Answer already recorded for question:', qid);
+            return;
+        }
+        
         // Record Answer
         const newAnswers = { ...answers, [qid]: value };
         setAnswers(newAnswers);

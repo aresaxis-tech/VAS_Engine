@@ -41,7 +41,9 @@ export const ChatAssessmentEngine: React.FC<ChatAssessmentEngineProps> = ({ onCo
     // Voice State
     const [voiceMode, setVoiceMode] = useState(false);
     const [isRecording, setIsRecording] = useState(false);
+    const [isSpeaking, setIsSpeaking] = useState(false);
     const stopRecordingRef = useRef<(() => Promise<string | null>) | null>(null);
+    const isRecordingRef = useRef(false);
     const voiceModeRef = useRef(voiceMode); // Ref to track voice mode for callbacks
 
     // Sync ref
@@ -76,14 +78,35 @@ export const ChatAssessmentEngine: React.FC<ChatAssessmentEngineProps> = ({ onCo
 
     // Dedicated Start/Stop Listening
     const startListening = async () => {
-        if (isRecording) return; // Already recording
+        if (!voiceMode) return; // Don't start if voice mode is off
+        if (isRecordingRef.current) {
+            console.log("[Auto-Listen] Already recording, skipping...");
+            return;
+        }
+
+        isRecordingRef.current = true;
         setIsRecording(true);
-        console.log("[ChatDebug] Auto-starting mic...");
+        console.log("[Auto-Listen] Starting microphone...");
         try {
-            const { stop } = await startRecording();
+            const { stop } = await startRecording((transcript) => {
+                console.log("[Auto-Listen] Auto-stop triggered by silence detection");
+                isRecordingRef.current = false;
+                setIsRecording(false);
+                if (transcript && transcript.trim().length > 0) {
+                    setInputValue(transcript);
+                    handleAnswer(transcript);
+                    setInputValue("");
+                }
+                // Always restart listening
+                if (voiceMode && activeQuestions[currentIndex]) {
+                    console.log("[Auto-Listen] Auto-restarting from silence detection");
+                    setTimeout(() => startListening(), 500);
+                }
+            });
             stopRecordingRef.current = stop;
+            console.log("[Auto-Listen] Microphone active, waiting for speech...");
         } catch (e) {
-            console.error("[ChatDebug] Mic failed:", e);
+            console.error("[Auto-Listen] Microphone failed:", e);
             setIsRecording(false);
         }
     };
@@ -91,15 +114,21 @@ export const ChatAssessmentEngine: React.FC<ChatAssessmentEngineProps> = ({ onCo
     const stopListening = async () => {
         if (!isRecording) return;
         setIsRecording(false);
-        console.log("[ChatDebug] Stopping recording...");
+        console.log("[Auto-Listen] Stopping recording...");
         if (stopRecordingRef.current) {
             const text = await stopRecordingRef.current();
-            console.log("[ChatDebug] Transcription received:", text);
+            console.log("[Auto-Listen] Transcription received:", text);
             stopRecordingRef.current = null;
             if (text && text.trim().length > 0) {
                 setInputValue(text);
                 handleAnswer(text);
                 setInputValue("");
+            } else {
+                // If no text received and voice mode is still on, restart listening
+                if (voiceMode && activeQuestions[currentIndex]) {
+                    console.log("[Auto-Listen] No speech detected, restarting listening...");
+                    setTimeout(() => startListening(), 500);
+                }
             }
         }
     };
@@ -116,27 +145,34 @@ export const ChatAssessmentEngine: React.FC<ChatAssessmentEngineProps> = ({ onCo
         if (lastMsg && lastMsg.role === "bot") {
             // Stop any existing recording before bot speaks
             if (isRecording) {
-                // If we were recording, cancel it effectively? Or just stop.
-                // Better to simple set state false and kill ref without processing to avoid self-talk loop
+                console.log("[Auto-Listen] Stopping recording before bot speaks");
                 setIsRecording(false);
                 if (stopRecordingRef.current) {
-                    stopRecordingRef.current(); // Just stop, don't waiting for text?
+                    stopRecordingRef.current();
                     stopRecordingRef.current = null;
                 }
             }
 
             const timer = setTimeout(() => {
                 const textToSpeak = typeof lastMsg.text === 'string' ? lastMsg.text : "Please select an option.";
+                setIsSpeaking(true);
                 speakText(textToSpeak, () => {
-                    // Only start listening if voice mode is STILL on
-                    if (voiceModeRef.current) {
-                        startListening();
+                    setIsSpeaking(false);
+                    // Auto-start listening after bot finishes speaking (only for new questions)
+                    if (voiceModeRef.current && !isTyping && activeQuestions[currentIndex] && lastMsg.type === "question") {
+                        console.log("[Auto-Listen] Starting automated listening after TTS for new question...");
+                        setTimeout(() => {
+                            console.log("[Auto-Listen] Attempting to start listening, isRecording:", isRecordingRef.current);
+                            isRecordingRef.current = false;
+                            setIsRecording(false);
+                            startListening();
+                        }, 500); // 500ms delay after Polly finishes
                     }
                 });
             }, 500);
             return () => clearTimeout(timer);
         }
-    }, [messages, voiceMode]);
+    }, [messages, voiceMode, isTyping, currentIndex, activeQuestions]);
 
     // Handle Mic Logic (Toggle)
     const toggleRecording = async () => {
@@ -199,7 +235,7 @@ export const ChatAssessmentEngine: React.FC<ChatAssessmentEngineProps> = ({ onCo
             // Intro is there, questions are ready, and we haven't asked yet.
             askQuestion(0);
         }
-    }, [isLoadingQuestions, activeQuestions, messages]);
+    }, [isLoadingQuestions, activeQuestions.length, messages.length]);
 
     const startIntro = async () => {
         setIsTyping(true);
@@ -220,11 +256,19 @@ export const ChatAssessmentEngine: React.FC<ChatAssessmentEngineProps> = ({ onCo
         }
 
         const q = activeQuestions[index];
+
+        // Check if this question is already asked
+        const questionId = `q-${q.id}`;
+        if (messages.some(m => m.id.startsWith(questionId))) {
+            console.log('Question already asked, skipping:', q.text);
+            return;
+        }
+
         setIsTyping(true);
         await new Promise(r => setTimeout(r, 600)); // Natural Pauses
 
         addMessage({
-            id: `q-${q.id}`,
+            id: `${questionId}-${Date.now()}`,
             role: "bot",
             text: q.text,
             type: "question"
@@ -318,14 +362,16 @@ export const ChatAssessmentEngine: React.FC<ChatAssessmentEngineProps> = ({ onCo
                                 }`}
                         >
                             <div className="flex items-center gap-3">
-                                <div className={`w-1.5 h-1.5 rounded-full ${voiceMode ? "bg-orange-500 animate-[pulse_2s_infinite]" : "bg-slate-600"}`} />
-                                <Mic className={`w-3.5 h-3.5 ${voiceMode ? "text-orange-500" : "text-slate-600"}`} />
-                                <span>{voiceMode ? "Voice Active" : "Voice Off"}</span>
+                                <div className={`w-1.5 h-1.5 rounded-full ${voiceMode && isRecording ? "bg-red-500 animate-[pulse_1s_infinite]" : voiceMode ? "bg-orange-500 animate-[pulse_2s_infinite]" : "bg-slate-600"}`} />
+                                <Mic className={`w-3.5 h-3.5 ${voiceMode && isRecording ? "text-red-500" : voiceMode ? "text-orange-500" : "text-slate-600"}`} />
+                                <span>
+                                    {voiceMode && isRecording ? "Listening" : voiceMode ? "Voice Active" : "Voice Off"}
+                                </span>
                             </div>
 
                             {/* Glow Effect */}
                             {voiceMode && (
-                                <div className="absolute inset-0 rounded-full bg-orange-500/10 blur-md -z-10" />
+                                <div className={`absolute inset-0 rounded-full blur-md -z-10 ${isRecording ? "bg-red-500/10" : "bg-orange-500/10"}`} />
                             )}
                         </Button>
                     </div>
@@ -364,6 +410,18 @@ export const ChatAssessmentEngine: React.FC<ChatAssessmentEngineProps> = ({ onCo
                     )}
                     <div ref={messagesEndRef} />
                 </div>
+
+                {/* Voice Status Indicator */}
+                {voiceMode && (isSpeaking || isRecording) && (
+                    <div className="absolute bottom-20 left-1/2 -translate-x-1/2 z-50">
+                        <div className="bg-slate-900/95 border border-slate-700 rounded-full px-4 py-2 flex items-center gap-3 backdrop-blur-md shadow-lg">
+                            <div className={`w-2 h-2 rounded-full ${isSpeaking ? "bg-blue-500 animate-pulse" : "bg-red-500 animate-pulse"}`} />
+                            <span className="text-sm text-white font-medium">
+                                {isSpeaking ? "Speaking..." : "Listening..."}
+                            </span>
+                        </div>
+                    </div>
+                )}
 
                 {/* Sticky Input Area */}
                 <div className="absolute bottom-0 left-0 right-0 p-4 bg-slate-900/90 border-t border-slate-800 backdrop-blur-lg">
@@ -435,16 +493,18 @@ export const ChatAssessmentEngine: React.FC<ChatAssessmentEngineProps> = ({ onCo
                                                 <Mic className="w-5 h-5" />
                                             </button>
                                         </div>
-                                        {/* Distinct Speak Button */}
-                                        <Button
-                                            type="button"
-                                            onClick={toggleRecording}
-                                            variant="secondary"
-                                            className={`h-12 w-12 sm:w-auto ${isRecording ? "bg-red-500/10 text-red-500 border-red-500/50 hover:bg-red-500/20" : ""}`}
-                                        >
-                                            <Mic className={`w-5 h-5 sm:mr-2 ${isRecording ? "animate-pulse" : ""}`} />
-                                            <span className="hidden sm:inline">{isRecording ? "Stop" : "Speak"}</span>
-                                        </Button>
+                                        {/* Distinct Speak Button - Only show when voice mode is on */}
+                                        {voiceMode && (
+                                            <Button
+                                                type="button"
+                                                onClick={toggleRecording}
+                                                variant="secondary"
+                                                className={`h-12 w-12 sm:w-auto transition-all ${isRecording ? "bg-red-500/10 text-red-500 border-red-500/50 hover:bg-red-500/20 animate-pulse" : "bg-slate-800 hover:bg-slate-700"}`}
+                                            >
+                                                <Mic className={`w-5 h-5 sm:mr-2 ${isRecording ? "animate-pulse" : ""}`} />
+                                                <span className="hidden sm:inline">{isRecording ? "Listening..." : "Speak"}</span>
+                                            </Button>
+                                        )}
                                         <Button type="submit" size="icon" className="w-12 h-12 rounded-xl bg-orange-600 hover:bg-orange-500 shrink-0">
                                             <Send className="w-5 h-5" />
                                         </Button>

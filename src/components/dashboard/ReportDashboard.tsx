@@ -24,6 +24,7 @@ import {
     Dialog, DialogContent, DialogDescription,
     DialogHeader, DialogTitle
 } from "@/components/ui/dialog";
+import { speakText } from "@/lib/voice";
 
 interface ReportDashboardProps {
     answers: Record<string, any>;
@@ -119,13 +120,7 @@ export function ReportDashboard({ answers, riskAnalysis, questions, onRestart, o
         return () => window.removeEventListener("scroll", handleScroll);
     }, []);
 
-    useEffect(() => {
-        const result = calculateRiskScore(answers, questions);
-        setAnalysis(result);
 
-        // Trigger AI Analysis
-        // ... (existing code)
-    }, [answers, riskAnalysis, questions]);
 
     if (!analysis) return (
         <div className="flex h-[80vh] items-center justify-center">

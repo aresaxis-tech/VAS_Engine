@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Mic, Building, MapPin, Loader2, ShieldCheck, ArrowRight, CheckCircle2, ArrowLeft } from "lucide-react";
-import { speakText, startRecording } from "@/lib/voice";
+import { speakText, startRecording, startAutoListening } from "@/lib/voice";
 import { IndustrySelection } from "@/components/onboarding/IndustrySelection";
 import { PincodeData } from "@/lib/pincodeMaster";
 
@@ -18,12 +18,16 @@ export type WizardStep = "START" | "CUSTOMER_TYPE" | "VERIFICATION_METHOD" | "IN
 
 export const AssessmentWizard: React.FC<AssessmentWizardProps> = ({ onComplete, onBack }) => {
     const [step, setStep] = useState<WizardStep>("CUSTOMER_TYPE");
+    const stepRef = useRef<WizardStep>("CUSTOMER_TYPE");
     const [isSpeaking, setIsSpeaking] = useState(false);
     const [voiceMode, setVoiceMode] = useState(false);
 
     // Voice Input State
     const [recordingField, setRecordingField] = useState<string | null>(null);
     const stopRecordingRef = useRef<(() => Promise<string | null>) | null>(null);
+    const [autoListening, setAutoListening] = useState<{ stop: () => void; isListening: boolean } | null>(null);
+    const [lastTranscript, setLastTranscript] = useState<string>("");
+    const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
     // Form Data
     const [isExistingCustomer, setIsExistingCustomer] = useState<boolean | null>(null);
@@ -107,10 +111,45 @@ export const AssessmentWizard: React.FC<AssessmentWizardProps> = ({ onComplete, 
         nextStep(nextStepName, speech);
     };
 
-    // Simulate Voice Greeting on Mount
+    // Voice prompts for each step
     useEffect(() => {
-        // handleVoice("Welcome to ICICI Lombard. Let's secure your business. Are you an existing customer or a new customer?");
-    }, []);
+        if (voiceMode) {
+            switch (step) {
+                case "CUSTOMER_TYPE":
+                    handleVoice("Welcome to ICICI Lombard Risk Assessment. Are you an existing customer with a policy, or are you a new customer?");
+                    break;
+                case "VERIFICATION_METHOD":
+                    handleVoice("How would you like to verify your account? Say policy number or mobile number.");
+                    break;
+                case "INDUSTRY":
+                    handleVoice("Please select your business industry. Say your industry name like retail or healthcare.");
+                    break;
+                case "COMPANY":
+                    handleVoice("Please say your company name.");
+                    break;
+                case "LOCATION":
+                    handleVoice("Where are your primary operations located?");
+                    break;
+                case "POLICY_INPUT":
+                    handleVoice(verificationMethod === "POLICY" ? "Please say your policy number." : "Please say your mobile number.");
+                    break;
+            }
+        }
+    }, [step, voiceMode, verificationMethod]);
+
+    // Cleanup auto listening on unmount
+    useEffect(() => {
+        return () => {
+            if (autoListening) {
+                autoListening.stop();
+                setAutoListening(null);
+            }
+            if (timeoutRef.current) {
+                clearTimeout(timeoutRef.current);
+                timeoutRef.current = null;
+            }
+        };
+    }, [autoListening]);
 
     // Helper to get field name from step
     const getFieldForStep = (currentStep: WizardStep): string | null => {
@@ -123,36 +162,272 @@ export const AssessmentWizard: React.FC<AssessmentWizardProps> = ({ onComplete, 
     };
 
     const handleVoice = async (text: string) => {
-        if (!voiceMode) return; // Voice Guard
+        if (!voiceMode || isSpeaking) return; // Voice Guard - prevent multiple simultaneous speech
         setIsSpeaking(true);
         // Clean text for speech
         const speechText = text.replace(/[*#]/g, '');
 
+
         await speakText(speechText, () => {
-            // Auto-Listen after speech
-            const field = getFieldForStep(step);
-            if (field && voiceMode) {
-                console.log(`[VoiceDebug] Auto-starting mic for ${field}`);
-                startRecordingForField(field);
+            if (step === "PROCESSING") {
+                //close listening on processing
+                if (autoListening) {
+                    autoListening.stop();
+                    setAutoListening(null);
+                }
             }
+            setIsSpeaking(false);
+            // Wait 200ms second after speech ends before starting auto-listening
+            setTimeout(() => {
+                if (voiceMode && (step === "CUSTOMER_TYPE" || step === "VERIFICATION_METHOD" || step === "INDUSTRY" || step === "COMPANY" || step === "LOCATION" || step === "POLICY_INPUT" || step === "CONFIRMATION")) {
+                    startAutoVoiceListening();
+
+                }
+            }, 200);
         });
-        setIsSpeaking(false);
     };
 
     const nextStep = (next: WizardStep, speech?: string) => {
+        // Stop current auto listening
+        if (autoListening?.isListening) {
+            autoListening.stop();
+            setAutoListening(null);
+        }
+
         setStep(next);
+        stepRef.current = next;
         // We delay speech slightly to ensure render? usually fine.
-        if (speech && voiceMode) handleVoice(speech);
+        if (speech && voiceMode) {
+            handleVoice(speech);
+        } else if (voiceMode && next === "CONFIRMATION") {
+            // Start auto-listening for confirmation step even without speech
+            setTimeout(() => {
+                if (voiceMode) startAutoVoiceListening();
+            }, 500);
+        }
+    };
+
+    // Start automatic voice listening
+    const startAutoVoiceListening = async () => {
+        if (!voiceMode || isSpeaking) return;
+
+        // Stop any existing listening session
+        if (autoListening?.isListening) {
+            autoListening.stop();
+            setAutoListening(null);
+        }
+
+        try {
+            console.log('Starting auto listening for step:', step);
+            const listener = await startAutoListening({
+                context: () => stepRef.current,
+                onIntent: (intent) => {
+                    console.log('Intent received:', intent, 'Current step:', stepRef.current);
+                    handleVoiceIntent(intent, stepRef.current);
+                },
+                onTranscript: setLastTranscript,
+                onTextInput: (text) => {
+                    console.log('Text input received:', text, 'for step:', stepRef.current);
+                    handleTextInput(text, stepRef.current);
+                },
+                silenceTimeout: 1000 // 1 second silence to trigger transcription
+            });
+            setAutoListening(listener);
+
+            // Auto-stop listening after 60 seconds as fallback
+            if (timeoutRef.current) clearTimeout(timeoutRef.current);
+            timeoutRef.current = setTimeout(() => {
+                if (listener.isListening) {
+                    listener.stop();
+                }
+                setAutoListening(null);
+                timeoutRef.current = null;
+            }, 60000); // 1 minute total timeout
+        } catch (error) {
+            console.error('Failed to start auto listening:', error);
+            if (voiceMode) {
+                handleVoice("Voice recognition is not available. Please use the buttons to continue.");
+            }
+        }
+    };
+
+    // Handle voice intent
+    const handleVoiceIntent = (intent: any, currentStep: WizardStep) => {
+        console.log('handleVoiceIntent called with:', { intent, currentStep, stateStep: step });
+
+        if (intent.action === 'select') {
+            switch (currentStep) {
+                case 'CUSTOMER_TYPE':
+                    console.log('Processing CUSTOMER_TYPE selection:', intent.option);
+                    if (intent.option === 'existing') {
+                        console.log('Setting existing customer to true');
+                        setIsExistingCustomer(true);
+                        nextStep("VERIFICATION_METHOD");
+                    } else if (intent.option === 'new') {
+                        console.log('Setting existing customer to false, moving to industry');
+                        setIsExistingCustomer(false);
+                        nextStep("INDUSTRY");
+                    } else {
+                        console.log('Unknown customer type option:', intent.option);
+                        handleVoice("I didn't understand. Please say existing customer or new customer.");
+                    }
+                    break;
+                case 'VERIFICATION_METHOD':
+                    console.log('Processing VERIFICATION_METHOD selection:', intent.option);
+                    if (intent.option === 'policy') {
+                        setVerificationMethod("POLICY");
+                        nextStep("POLICY_INPUT");
+                    } else if (intent.option === 'mobile') {
+                        setVerificationMethod("MOBILE");
+                        nextStep("POLICY_INPUT");
+                    } else {
+                        console.log('Unknown verification method option:', intent.option);
+                        handleVoice("Please say policy number or mobile number.");
+                    }
+                    break;
+                case 'INDUSTRY':
+                    console.log('Processing INDUSTRY case with option:', intent.option);
+                    if (intent.option) {
+                        console.log('Setting industry to:', intent.option);
+                        setIndustry(intent.option);
+                        nextStep("COMPANY");
+                    } else {
+                        console.log('No industry option detected in intent:', intent);
+                        handleVoice("Please say your industry like retail or healthcare");
+                    }
+                    break;
+                case 'CONFIRMATION':
+                    console.log('Processing CONFIRMATION with action:', intent.action);
+                    if (intent.action === 'confirm') {
+                        handleProcessing();
+                    }
+                    break;
+            }
+        } else if (intent.action === 'confirm') {
+            if (currentStep === 'CONFIRMATION') {
+                handleProcessing();
+            }
+        } else if (intent.action === 'back') {
+            handleBack();
+        } else if (intent.action === 'unclear') {
+            // Provide helpful feedback and restart listening
+            const helpText = getHelpTextForStep(currentStep);
+            console.log('Unclear intent for step:', currentStep, 'transcript:', lastTranscript);
+            handleVoice(`I didn't understand. ${lastTranscript ? `You said: ${lastTranscript}.` : ''} ${helpText}`);
+            // Restart listening after feedback
+            setTimeout(() => {
+                if (voiceMode && (currentStep === "CUSTOMER_TYPE" || currentStep === "VERIFICATION_METHOD" || currentStep === "INDUSTRY" || currentStep === "COMPANY" || currentStep === "LOCATION" || currentStep === "POLICY_INPUT" || currentStep === "CONFIRMATION")) {
+                    startAutoVoiceListening();
+                }
+            }, 3000);
+        } else {
+            console.log('Unknown intent action:', intent.action, 'for step:', currentStep);
+        }
+
+        // Stop current listening session
+        if (autoListening) {
+            autoListening.stop();
+            setAutoListening(null);
+        }
+        if (timeoutRef.current) {
+            clearTimeout(timeoutRef.current);
+            timeoutRef.current = null;
+        }
+    };
+
+    // Handle text input for input fields
+    const handleTextInput = (text: string, currentStep: WizardStep) => {
+        console.log('Handling text input:', text, 'for step:', currentStep);
+
+        switch (currentStep) {
+            case 'CUSTOMER_TYPE':
+                // Don't handle as text input, should go through intent detection
+                return;
+            case 'VERIFICATION_METHOD':
+                // Don't handle as text input, should go through intent detection
+                return;
+            case 'INDUSTRY':
+                // Don't handle as text input, should go through intent detection
+                return;
+            case 'POLICY_INPUT':
+                setPolicyNumber(text);
+                handleVoice(`I heard ${text}. Press Enter to proceed or speak again to change.`);
+                break;
+            case 'COMPANY':
+                setCompanyName(text);
+                handleVoice(`I heard ${text}. Press Enter to proceed or speak again to change.`);
+                break;
+            case 'LOCATION':
+                setLocation(text);
+                // Trigger pincode search for voice input
+                if (searchTimeout.current) clearTimeout(searchTimeout.current);
+                if (text.length > 2) {
+                    setIsSearching(true);
+                    searchTimeout.current = setTimeout(async () => {
+                        try {
+                            const res = await fetch(`/api/pincode-lookup?q=${encodeURIComponent(text)}`);
+                            const data = await res.json();
+                            if (data.results) {
+                                setPincodeSuggestions(data.results);
+                            }
+                        } catch (err) {
+                            console.error("Pincode search failed", err);
+                        } finally {
+                            setIsSearching(false);
+                        }
+                    }, 400);
+                }
+                handleVoice(`I heard ${text}. Press Enter to proceed or speak again to change.`);
+                break;
+        }
+
+        // Stop current listening
+        if (autoListening) {
+            autoListening.stop();
+            setAutoListening(null);
+        }
+        if (timeoutRef.current) {
+            clearTimeout(timeoutRef.current);
+            timeoutRef.current = null;
+        }
+    };
+
+    // Get contextual help text for each step
+    const getHelpTextForStep = (currentStep: WizardStep): string => {
+        switch (currentStep) {
+            case 'CUSTOMER_TYPE':
+                return 'Please say "existing customer" if you already have a policy with us, or "new customer" if you are applying for the first time.';
+            case 'VERIFICATION_METHOD':
+                return 'Please say "policy number" to verify using your policy document, or "mobile number" to verify using your registered phone number.';
+            case 'INDUSTRY':
+                return 'Please say your business industry like "retail" or "healthcare"';
+            case 'LOCATION':
+                return 'Please say your city or location like "Mumbai", "Delhi", or "Bangalore".';
+            case 'CONFIRMATION':
+                return 'Please say "confirm" or "yes" to proceed, or "back" to go back.';
+            default:
+                return 'Please try again or use the buttons on screen.';
+        }
     };
 
     // Toggle Voice Mode
     const toggleVoice = () => {
         const newMode = !voiceMode;
         setVoiceMode(newMode);
+
+        if (autoListening) {
+            autoListening.stop();
+            setAutoListening(null);
+        }
+
         if (newMode) {
-            handleVoice("Voice guidance enabled.");
+            // Only speak if we're on a step that has voice prompts
+            if (step === "CUSTOMER_TYPE") {
+                handleVoice("Welcome to ICICI Lombard Risk Assessment. Are you an existing customer with a policy, or are you a new customer?");
+            }
         } else {
             speakText(""); // Stop speech
+            setIsSpeaking(false);
         }
     };
 
@@ -207,18 +482,45 @@ export const AssessmentWizard: React.FC<AssessmentWizardProps> = ({ onComplete, 
     };
 
     const handleProcessing = async (overrides?: NodeJS.Dict<any>) => {
+        // Stop microphone before processing
+        if (autoListening) {
+            autoListening.stop();
+            setAutoListening(null);
+        }
+        if (timeoutRef.current) {
+            clearTimeout(timeoutRef.current);
+            timeoutRef.current = null;
+        }
+
         setStep("PROCESSING");
-        handleVoice("Scraping industry and location level claims. Analyzing your risk profile.");
+        stepRef.current = "PROCESSING";
+        handleVoice("Analyzing your risk profile using industry data.");
 
-        // Removed simulated delay for instant navigation
-        // await new Promise(resolve => setTimeout(resolve, 4000));
+        try {
+            // Call analyze-risk API
+            const prompt = `Company: ${companyName || "FabTex Industries"}, Industry: ${industry || "Manufacturing"}, Location: ${location}, Risk Assessment Summary`;
+            const res = await fetch("/api/analyze-risk", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ prompt })
+            });
+            const data = await res.json();
 
-        // Small buffer to allow the UI to render the processing state briefly if needed
-        await new Promise(resolve => setTimeout(resolve, 500));
+            // Create summary and speak it
+            // const summary = `Analysis complete. ${data.summary || "Your risk profile has been generated with personalized recommendations."}`;
+            // if (voiceMode) {
+            //     await speakText(summary);
+            // }
+        } catch (error) {
+            console.error("Risk analysis failed:", error);
+            if (voiceMode) {
+                await speakText("Analysis complete. Your risk profile is ready.");
+            }
+        }
 
         onComplete({
-            industry: industry || "Manufacturing", // Fallback
-            companyName: companyName || "FabTex Industries", // Fallback
+            industry: industry || "Manufacturing",
+            companyName: companyName || "FabTex Industries",
             location,
             policyNumber: isExistingCustomer ? policyNumber : undefined,
             subDomain,
@@ -228,443 +530,393 @@ export const AssessmentWizard: React.FC<AssessmentWizardProps> = ({ onComplete, 
     };
 
     return (
-        <div className={`w-full mx-auto p-4 transition-all duration-500 relative ${step === "INDUSTRY" ? "max-w-5xl" : "max-w-3xl"}`}>
+        <>
+            <div className={`w-full mx-auto p-4 transition-all duration-500 relative ${step === "INDUSTRY" ? "max-w-5xl" : "max-w-3xl"}`}>
 
-            {/* Ambient Background Glow for "Awesome" Factor */}
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] bg-icici-orange/5 blur-[120px] rounded-full pointer-events-none" />
+                {/* Ambient Background Glow for "Awesome" Factor */}
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] bg-icici-orange/5 blur-[120px] rounded-full pointer-events-none" />
 
-            <Card className="glass-panel-premium border-0 ring-1 ring-white/10 shadow-2xl shadow-black/50 relative overflow-hidden min-h-[550px] flex flex-col items-center justify-center text-center backdrop-blur-3xl p-[4vmin]">
+                <Card className="glass-panel-premium border-0 ring-1 ring-white/10 shadow-2xl shadow-black/50 relative overflow-hidden min-h-[550px] flex flex-col items-center justify-center text-center backdrop-blur-3xl p-[4vmin] pb-16">
 
-                {/* Decorative Top Gradient Line */}
-                <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-icici-orange to-transparent opacity-80" />
-                <div className="absolute top-0 left-0 w-full h-20 bg-gradient-to-b from-icici-orange/10 to-transparent pointer-events-none" />
+                    {/* Decorative Top Gradient Line */}
+                    <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-icici-orange to-transparent opacity-80" />
+                    <div className="absolute top-0 left-0 w-full h-20 bg-gradient-to-b from-icici-orange/10 to-transparent pointer-events-none" />
 
-                {/* Back Button - Inner Placement */}
-                {step !== "PROCESSING" && (
-                    <button
-                        onClick={handleBack}
-                        className="absolute top-[1.5vmin] left-[1.5vmin] z-50 p-[1vmin] rounded-full bg-slate-800/50 border border-slate-700/50 text-slate-400 hover:text-white hover:bg-slate-800 transition-all backdrop-blur-md"
-                    >
-                        <ArrowLeft className="w-[2.5vmin] h-[2.5vmin]" />
-                    </button>
-                )}
-
-                {/* Persistent Voice Toggle - Holographic Pill Design */}
-                <div className="absolute top-[1.5vmin] right-[1.5vmin] z-50">
-                    <button
-                        onClick={toggleVoice}
-                        className={`group relative flex items-center gap-[1vmin] px-[2vmin] py-[1vmin] rounded-full border transition-all duration-500 ${voiceMode
-                            ? "bg-gradient-to-r from-orange-500/20 to-orange-600/20 border-orange-500/50 text-orange-400 shadow-[0_0_25px_rgba(249,115,22,0.4)]"
-                            : "bg-slate-900/60 border-slate-700/50 text-slate-400 hover:border-slate-500 hover:text-white hover:bg-slate-800/80"
-                            } backdrop-blur-md`}
-                    >
-                        {voiceMode && <span className="absolute inset-0 rounded-full border border-orange-500/50 animate-ping opacity-20"></span>}
-                        <div className={`relative w-[1vmin] h-[1vmin] rounded-full ${voiceMode ? "bg-orange-500 animate-[pulse_1s_ease-in-out_infinite] shadow-[0_0_10px_orange]" : "bg-slate-500"}`} />
-                        <Mic className={`w-[2vmin] h-[2vmin] ${voiceMode ? "text-orange-500" : "opacity-70"}`} />
-                        <span className="text-[1.2vmin] uppercase font-bold tracking-widest">{voiceMode ? "Voice Active" : "Voice Off"}</span>
-                    </button>
-                </div>
-
-                <AnimatePresence mode="wait">
-
-
-                    {step === "CUSTOMER_TYPE" && (
-                        <motion.div
-                            key="customer"
-                            initial={{ opacity: 0, y: 10, filter: "blur(4px)" }}
-                            animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-                            exit={{ opacity: 0, x: -20, filter: "blur(4px)" }}
-                            transition={{ duration: 0.4, ease: "easeOut" }}
-                            className="space-y-8 w-full pt-20"
+                    {/* Back Button - Inner Placement */}
+                    {step !== "PROCESSING" && (
+                        <button
+                            onClick={handleBack}
+                            className="absolute top-[1.5vmin] left-[1.5vmin] z-50 p-[1vmin] rounded-full bg-slate-800/50 border border-slate-700/50 text-slate-400 hover:text-white hover:bg-slate-800 transition-all backdrop-blur-md"
                         >
-                            <h3 className="text-2xl font-semibold text-white">Select Customer Type</h3>
-                            <div className="grid grid-cols-2 gap-6 max-w-lg mx-auto">
-                                <Button
-                                    variant="outline"
-                                    className="h-40 flex flex-col gap-4 bg-slate-900/40 border-slate-700/50 hover:bg-emerald-900/20 hover:border-emerald-500/50 text-slate-300 hover:text-emerald-400 transition-all duration-300 group backdrop-blur-sm"
-                                    onClick={() => {
-                                        setIsExistingCustomer(true);
-                                        nextStep("VERIFICATION_METHOD", "How would you like to verify your account?");
-                                    }}
-                                >
-                                    <div className="w-16 h-16 rounded-full bg-slate-800/50 group-hover:bg-emerald-500/20 flex items-center justify-center transition-colors">
-                                        <ShieldCheck className="w-8 h-8 text-emerald-600 group-hover:text-emerald-400 transition-colors" />
-                                    </div>
-                                    <span className="text-lg font-medium tracking-wide">Existing Customer</span>
-                                </Button>
-                                <Button
-                                    variant="outline"
-                                    className="h-40 flex flex-col gap-4 bg-slate-900/40 border-slate-700/50 hover:bg-orange-900/20 hover:border-orange-500/50 text-slate-300 hover:text-orange-400 transition-all duration-300 group backdrop-blur-sm"
-                                    onClick={() => {
-                                        setIsExistingCustomer(false);
-                                        nextStep("INDUSTRY", "Please select your industry.");
-                                    }}
-                                >
-                                    <div className="w-16 h-16 rounded-full bg-slate-800/50 group-hover:bg-orange-500/20 flex items-center justify-center transition-colors">
-                                        <Building className="w-8 h-8 text-slate-500 group-hover:text-orange-400 transition-colors" />
-                                    </div>
-                                    <span className="text-lg font-medium tracking-wide">New Customer</span>
-                                </Button>
-                            </div>
-                        </motion.div>
+                            <ArrowLeft className="w-[2.5vmin] h-[2.5vmin]" />
+                        </button>
                     )}
 
-                    {step === "VERIFICATION_METHOD" && (
-                        <motion.div
-                            key="verification_method"
-                            initial={{ opacity: 0, y: 10, filter: "blur(4px)" }}
-                            animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-                            exit={{ opacity: 0, x: -20, filter: "blur(4px)" }}
-                            transition={{ duration: 0.4, ease: "easeOut" }}
-                            className="space-y-8 w-full pt-20"
+                    {/* Persistent Voice Toggle - Holographic Pill Design */}
+                    <div className="absolute top-[1.5vmin] right-[1.5vmin] z-50">
+                        <button
+                            onClick={toggleVoice}
+                            className={`group relative flex items-center gap-[1vmin] px-[2vmin] py-[1vmin] rounded-full border transition-all duration-500 ${voiceMode
+                                ? "bg-gradient-to-r from-orange-500/20 to-orange-600/20 border-orange-500/50 text-orange-400 shadow-[0_0_25px_rgba(249,115,22,0.4)]"
+                                : "bg-slate-900/60 border-slate-700/50 text-slate-400 hover:border-slate-500 hover:text-white hover:bg-slate-800/80"
+                                } backdrop-blur-md`}
                         >
-                            <h3 className="text-2xl font-semibold text-white">How do you want to verify?</h3>
-                            <div className="grid grid-cols-2 gap-6 max-w-lg mx-auto">
-                                <Button
-                                    variant="outline"
-                                    className="h-40 flex flex-col gap-4 bg-slate-900/40 border-slate-700/50 hover:bg-blue-900/20 hover:border-blue-500/50 text-slate-300 hover:text-blue-400 transition-all duration-300 group backdrop-blur-sm"
-                                    onClick={() => {
-                                        setVerificationMethod("POLICY");
-                                        nextStep("POLICY_INPUT", "Please enter your policy number.");
-                                    }}
-                                >
-                                    <div className="w-16 h-16 rounded-full bg-slate-800/50 group-hover:bg-blue-500/20 flex items-center justify-center transition-colors">
-                                        <ShieldCheck className="w-8 h-8 text-blue-600 group-hover:text-blue-400 transition-colors" />
-                                    </div>
-                                    <span className="text-lg font-medium tracking-wide">Policy Number</span>
-                                </Button>
-                                <Button
-                                    variant="outline"
-                                    className="h-40 flex flex-col gap-4 bg-slate-900/40 border-slate-700/50 hover:bg-purple-900/20 hover:border-purple-500/50 text-slate-300 hover:text-purple-400 transition-all duration-300 group backdrop-blur-sm"
-                                    onClick={() => {
-                                        setVerificationMethod("MOBILE");
-                                        nextStep("POLICY_INPUT", "Please enter your mobile number.");
-                                    }}
-                                >
-                                    <div className="w-16 h-16 rounded-full bg-slate-800/50 group-hover:bg-purple-500/20 flex items-center justify-center transition-colors">
-                                        <div className="w-8 h-8 text-purple-600 group-hover:text-purple-400 transition-colors flex items-center justify-center font-bold text-2xl">#</div>
-                                    </div>
-                                    <span className="text-lg font-medium tracking-wide">Mobile Number</span>
-                                </Button>
-                            </div>
-                        </motion.div>
-                    )}
+                            {voiceMode && <span className="absolute inset-0 rounded-full border border-orange-500/50 animate-ping opacity-20"></span>}
+                            <div className={`relative w-[1vmin] h-[1vmin] rounded-full ${voiceMode ? "bg-orange-500 animate-[pulse_1s_ease-in-out_infinite] shadow-[0_0_10px_orange]" : "bg-slate-500"}`} />
+                            <Mic className={`w-[2vmin] h-[2vmin] ${voiceMode ? "text-orange-500" : "opacity-70"}`} />
+                            <span className="text-[1.2vmin] uppercase font-bold tracking-widest">
+                                {autoListening?.isListening ? "Listening" : voiceMode ? "Voice Active" : "Voice Off"}
+                            </span>
+                        </button>
+                    </div>
 
-                    {step === "POLICY_INPUT" && (
-                        <motion.div
-                            key="policy_input"
-                            initial={{ opacity: 0, x: 50 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            exit={{ opacity: 0, x: -50 }}
-                            className="space-y-6 w-full max-w-md mx-auto pt-20"
-                        >
-                            <h3 className="text-xl font-semibold text-white">
-                                {verificationMethod === "POLICY" ? "Enter Policy Number" : "Enter Mobile Number"}
-                            </h3>
-                            <div className="space-y-3">
-                                <div className="relative group">
-                                    <div className="absolute -inset-0.5 bg-gradient-to-r from-orange-500 to-orange-600 rounded-lg blur opacity-20 group-hover:opacity-40 transition duration-500"></div>
-                                    <Input
-                                        placeholder={verificationMethod === "POLICY" ? "e.g. 4005/12345/00/000" : "e.g. 9876543210"}
-                                        className={`relative bg-slate-950/80 text-white text-xl p-8 transition-all border-slate-800 focus:border-orange-500 focus:ring-orange-500/20 placeholder:text-slate-600 ${errors.policyNumber ? "border-red-500/50 focus:border-red-500" : ""}`}
-                                        value={policyNumber}
-                                        maxLength={verificationMethod === "MOBILE" ? 10 : undefined}
-                                        onChange={(e) => {
-                                            const val = e.target.value;
-                                            if (verificationMethod === "MOBILE" && val.length > 10) return;
-                                            setPolicyNumber(val);
-                                            if (errors.policyNumber) setErrors(prev => ({ ...prev, policyNumber: "" }));
-                                        }}
-                                    />
-                                </div>
-                                {errors.policyNumber && (
-                                    <p className="text-red-400 text-sm flex items-center gap-2 animate-in slide-in-from-left-2 pl-2">
-                                        <span className="w-1.5 h-1.5 rounded-full bg-red-500 shadow-[0_0_8px_red]" /> {errors.policyNumber}
-                                    </p>
+                    <AnimatePresence mode="wait">
+
+
+                        {step === "CUSTOMER_TYPE" && (
+                            <motion.div
+                                key="customer"
+                                initial={{ opacity: 0, y: 10, filter: "blur(4px)" }}
+                                animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+                                exit={{ opacity: 0, x: -20, filter: "blur(4px)" }}
+                                transition={{ duration: 0.4, ease: "easeOut" }}
+                                className="space-y-8 w-full pt-20"
+                            >
+                                <h3 className="text-2xl font-semibold text-white">Select Customer Type</h3>
+                                {voiceMode && (
+                                    <div className="space-y-2">
+                                        <p className="text-sm text-orange-400/80 animate-pulse">
+                                            Say "existing" or "new"
+                                        </p>
+                                        {autoListening?.isListening && (
+                                            <div className="flex items-center justify-center gap-2 text-xs text-green-400">
+                                                <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                                                Listening for customer type...
+                                            </div>
+                                        )}
+                                    </div>
                                 )}
-                            </div>
-                            <Button
-                                className="w-full bg-gradient-to-r from-orange-600 to-orange-500 hover:from-orange-500 hover:to-orange-400 py-8 text-xl font-semibold shadow-lg shadow-orange-900/20 transition-all border border-orange-500/20"
-                                onClick={() => handleNextWithValidation("policyNumber", policyNumber, "CONFIRMATION", "We found these details. Please confirm if they are correct.")}
-                            >
-                                Verify & Proceed
-                            </Button>
-                        </motion.div>
-                    )}
-
-                    {step === "CONFIRMATION" && (
-                        <motion.div
-                            key="confirmation"
-                            initial={{ opacity: 0, scale: 0.95 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            exit={{ opacity: 0, x: -50 }}
-                            className="space-y-6 w-full max-w-md mx-auto pt-20"
-                        >
-                            <h3 className="text-xl font-semibold text-white">Confirm Details</h3>
-                            <div className="bg-slate-800/50 rounded-xl p-6 space-y-4 text-left border border-slate-700">
-                                <div>
-                                    <label className="text-xs text-slate-500 uppercase">Policy Holder</label>
-                                    <p className="text-lg font-bold text-white">FabTex Industries Ltd.</p>
-                                </div>
-                                <div>
-                                    <label className="text-xs text-slate-500 uppercase">Registered Location</label>
-                                    <p className="text-lg text-white">Andheri East, Mumbai</p>
-                                </div>
-                                <div>
-                                    <label className="text-xs text-slate-500 uppercase">Primary Industry</label>
-                                    <p className="text-lg text-white">Retail & E-commerce</p>
-                                </div>
-                            </div>
-                            <Button
-                                className="w-full bg-emerald-600 hover:bg-emerald-500 py-6 text-lg shadow-lg shadow-emerald-900/20"
-                                onClick={() => {
-                                    setCompanyName("FabTex Industries Ltd.");
-                                    setLocation("Mumbai");
-                                    setIndustry("retail");
-                                    handleProcessing();
-                                }}
-                            >
-                                <CheckCircle2 className="mr-2" /> Confirm & Analyze
-                            </Button>
-                        </motion.div>
-                    )}
-
-
-                    {step === "INDUSTRY" && (
-                        <motion.div
-                            key="industry"
-                            initial={{ opacity: 0, scale: 0.95 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            exit={{ opacity: 0, scale: 1.05 }}
-                            className="w-full pt-20"
-                        >
-                            <IndustrySelection
-                                onSelect={(ind) => {
-                                    setIndustry(ind);
-                                    nextStep("COMPANY", "Please enter your company name.");
-                                }}
-                            />
-                        </motion.div>
-                    )}
-
-                    {step === "COMPANY" && (
-                        <motion.div
-                            key="company"
-                            initial={{ opacity: 0, x: 50 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            exit={{ opacity: 0, x: -50 }}
-                            className="space-y-6 w-full max-w-md mx-auto pt-20"
-                        >
-                            <h3 className="text-xl font-semibold text-white">What is your company name?</h3>
-                            <div className="space-y-3">
-                                <div className="relative group">
-                                    <div className="absolute -inset-0.5 bg-gradient-to-r from-orange-500 to-orange-600 rounded-lg blur opacity-20 group-hover:opacity-40 transition duration-500"></div>
-                                    <Input
-                                        placeholder="e.g. Acme Corp"
-                                        className={`relative bg-slate-950/80 text-white text-xl p-8 pr-16 transition-all border-slate-800 focus:border-orange-500 focus:ring-orange-500/20 placeholder:text-slate-600 ${errors.companyName ? "border-red-500/50 focus:border-red-500" : ""}`}
-                                        value={companyName}
-                                        onChange={(e) => {
-                                            setCompanyName(e.target.value);
-                                            if (errors.companyName) setErrors(prev => ({ ...prev, companyName: "" }));
+                                <div className="grid grid-cols-2 gap-6 max-w-lg mx-auto">
+                                    <Button
+                                        variant="outline"
+                                        className="h-40 flex flex-col gap-4 bg-slate-900/40 border-slate-700/50 hover:bg-emerald-900/20 hover:border-emerald-500/50 text-slate-300 hover:text-emerald-400 transition-all duration-300 group backdrop-blur-sm"
+                                        onClick={() => {
+                                            setIsExistingCustomer(true);
+                                            nextStep("VERIFICATION_METHOD");
                                         }}
-                                    />
-                                    {/* Mic Button */}
-                                    <button
-                                        onClick={() => toggleRecording("companyName", setCompanyName)}
-                                        className="absolute right-4 top-1/2 -translate-y-1/2 p-2 rounded-full hover:bg-slate-800 transition-colors z-10"
                                     >
-                                        <Mic className={`w-5 h-5 ${recordingField === "companyName" ? "text-red-500 animate-pulse" : "text-slate-400"}`} />
-                                    </button>
-                                </div>
-                                {errors.companyName && (
-                                    <p className="text-red-400 text-sm flex items-center gap-2 animate-in slide-in-from-left-2 pl-2">
-                                        <span className="w-1.5 h-1.5 rounded-full bg-red-500 shadow-[0_0_8px_red]" /> {errors.companyName}
-                                    </p>
-                                )}
-                            </div>
-                            <Button
-                                className="w-full bg-gradient-to-r from-orange-600 to-orange-500 hover:from-orange-500 hover:to-orange-400 py-8 text-xl font-semibold shadow-lg shadow-orange-900/20 transition-all border border-orange-500/20"
-                                onClick={() => handleNextWithValidation("companyName", companyName, "LOCATION", "Where are your primary operations located?")}
-                            >
-                                Next Step
-                            </Button>
-                        </motion.div>
-                    )}
-
-                    {step === "LOCATION" && (
-                        <motion.div
-                            key="location"
-                            initial={{ opacity: 0, x: 50 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            exit={{ opacity: 0, x: -50 }}
-                            className="space-y-6 w-full max-w-md mx-auto pt-20"
-                        >
-                            <h3 className="text-xl font-semibold text-white">Primary Location</h3>
-                            <div className="space-y-2 relative">
-                                <div className="relative">
-                                    <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 w-5 h-5 pointer-events-none" />
-                                    <Input
-                                        placeholder="City, State, or Pincode"
-                                        className={`bg-slate-900/50 text-white pl-14 pr-16 py-6 text-lg transition-all ${errors.location ? "border-red-500 focus:ring-red-500" : "border-slate-700"}`}
-                                        value={location}
-                                        onChange={(e) => {
-                                            const val = e.target.value;
-                                            setLocation(val);
-                                            if (errors.location) setErrors(prev => ({ ...prev, location: "" }));
-
-                                            if (searchTimeout.current) clearTimeout(searchTimeout.current);
-
-                                            if (val.length > 2) {
-                                                setIsSearching(true);
-                                                searchTimeout.current = setTimeout(async () => {
-                                                    try {
-                                                        const res = await fetch(`/api/pincode-lookup?q=${encodeURIComponent(val)}`);
-                                                        const data = await res.json();
-                                                        if (data.results) {
-                                                            setPincodeSuggestions(data.results);
-                                                        }
-                                                    } catch (err) {
-                                                        console.error("Pincode search failed", err);
-                                                    } finally {
-                                                        setIsSearching(false);
-                                                    }
-                                                }, 400);
-                                            } else {
-                                                setPincodeSuggestions([]);
-                                                setIsSearching(false);
-                                            }
-                                        }}
-                                    />
-
-                                    {/* Mic Button */}
-                                    <button
-                                        onClick={() => toggleRecording("location", setLocation, (txt) => handleProcessing({ location: txt }))}
-                                        className="absolute right-4 top-1/2 -translate-y-1/2 p-2 rounded-full hover:bg-slate-800 transition-colors z-10"
-                                    >
-                                        <Mic className={`w-5 h-5 ${recordingField === "location" ? "text-red-500 animate-pulse" : "text-slate-400"}`} />
-                                    </button>
-                                    {pincodeSuggestions.length > 0 && (
-                                        <div className="absolute top-full left-0 right-0 mt-2 bg-slate-900 border border-slate-700 rounded-xl shadow-2xl z-50 overflow-hidden max-h-[300px] overflow-y-auto">
-                                            {pincodeSuggestions.map((item) => (
-                                                <div
-                                                    key={`${item.pincode}-${item.city}-${item.area}`}
-                                                    className="p-3 hover:bg-slate-800 cursor-pointer flex justify-between items-center transition-colors border-b border-slate-800/50 last:border-0"
-                                                    onClick={() => {
-                                                        if (searchTimeout.current) clearTimeout(searchTimeout.current);
-                                                        setLocation(`${item.area}, ${item.city}, ${item.state} (${item.pincode})`);
-                                                        setPincodeSuggestions([]);
-                                                        setIsSearching(false);
-                                                    }}
-                                                >
-                                                    <div>
-                                                        <div className="text-white font-medium">{item.area}, {item.city}</div>
-                                                        <div className="text-xs text-slate-400">{item.state}</div>
-                                                    </div>
-                                                    <Badge variant="secondary" className="bg-slate-800 text-slate-300 font-mono text-xs">
-                                                        {item.pincode}
-                                                    </Badge>
-                                                </div>
-                                            ))}
+                                        <div className="w-16 h-16 rounded-full bg-slate-800/50 group-hover:bg-emerald-500/20 flex items-center justify-center transition-colors">
+                                            <ShieldCheck className="w-8 h-8 text-emerald-600 group-hover:text-emerald-400 transition-colors" />
                                         </div>
-                                    )}
-                                </div>
-                                {errors.location && (
-                                    <p className="text-red-400 text-sm flex items-center gap-2 animate-in slide-in-from-left-2">
-                                        <div className="w-1.5 h-1.5 rounded-full bg-red-400" /> {errors.location}
-                                    </p>
-                                )}
-                            </div>
-                            <Button
-                                className="w-full bg-icici-orange hover:bg-orange-600 py-6 text-lg"
-                                onClick={() => {
-                                    const error = validateRequired(location, "Location");
-                                    if (error) {
-                                        setErrors(prev => ({ ...prev, location: error }));
-                                        return;
-                                    }
-                                    handleProcessing();
-                                }}
-                            >
-                                <CheckCircle2 className="mr-2" /> Generate Risk Report
-                            </Button>
-                        </motion.div>
-                    )}
-
-                    {step === "SUB_DOMAIN" && (
-                        <motion.div
-                            key="sub_domain"
-                            initial={{ opacity: 0, x: 50 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            exit={{ opacity: 0, x: -50 }}
-                            className="space-y-6 w-full max-w-lg mx-auto pt-20"
-                        >
-                            <h3 className="text-xl font-semibold text-white">Operational Sub-domain</h3>
-                            <p className="text-sm text-slate-400">Select your specific domain to unlock tailored recommendations.</p>
-
-                            {loadingIntel ? (
-                                <div className="flex justify-center py-10">
-                                    <Loader2 className="w-8 h-8 text-orange-500 animate-spin" />
-                                </div>
-                            ) : intelData?.sub_sectors?.length > 0 ? (
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                                    {intelData.sub_sectors.map((sub: string) => (
-                                        <Button
-                                            key={sub}
-                                            variant="outline"
-                                            className={`h-auto py-4 text-left justify-start border-slate-700 bg-slate-900/50 hover:bg-orange-500/10 hover:border-orange-500/50 hover:text-orange-400 transition-all ${subDomain === sub ? "border-orange-500 bg-orange-500/10 text-orange-400" : "text-slate-300"}`}
-                                            onClick={() => {
-                                                setSubDomain(sub);
-                                                handleProcessing();
-                                            }}
-                                        >
-                                            <span className="truncate">{sub}</span>
-                                            {subDomain === sub && <CheckCircle2 className="ml-auto w-4 h-4 text-orange-500" />}
-                                        </Button>
-                                    ))}
-                                </div>
-                            ) : (
-                                <div className="space-y-2 relative">
-                                    <Input
-                                        placeholder="e.g. Dyeing Unit, Chemical Storage..."
-                                        className={`bg-slate-900/50 text-white text-lg p-6 pr-16 transition-all ${errors.subDomain ? "border-red-500 focus:ring-red-500" : "border-slate-700"}`}
-                                        value={subDomain}
-                                        onChange={(e) => {
-                                            setSubDomain(e.target.value);
-                                            if (errors.subDomain) setErrors(prev => ({ ...prev, subDomain: "" }));
+                                        <span className="text-lg font-medium tracking-wide">Existing Customer</span>
+                                    </Button>
+                                    <Button
+                                        variant="outline"
+                                        className="h-40 flex flex-col gap-4 bg-slate-900/40 border-slate-700/50 hover:bg-orange-900/20 hover:border-orange-500/50 text-slate-300 hover:text-orange-400 transition-all duration-300 group backdrop-blur-sm"
+                                        onClick={() => {
+                                            setIsExistingCustomer(false);
+                                            nextStep("INDUSTRY");
                                         }}
-                                    />
-                                    {/* Mic Button */}
-                                    <button
-                                        onClick={() => toggleRecording("subDomain", setSubDomain)}
-                                        className="absolute right-4 top-1/2 -translate-y-1/2 p-2 rounded-full hover:bg-slate-800 transition-colors z-10"
                                     >
-                                        <Mic className={`w-5 h-5 ${recordingField === "subDomain" ? "text-red-500 animate-pulse" : "text-slate-400"}`} />
-                                    </button>
+                                        <div className="w-16 h-16 rounded-full bg-slate-800/50 group-hover:bg-orange-500/20 flex items-center justify-center transition-colors">
+                                            <Building className="w-8 h-8 text-slate-500 group-hover:text-orange-400 transition-colors" />
+                                        </div>
+                                        <span className="text-lg font-medium tracking-wide">New Customer</span>
+                                    </Button>
+                                </div>
+                            </motion.div>
+                        )}
 
-                                    {errors.subDomain && (
-                                        <p className="text-red-400 text-sm flex items-center gap-2 animate-in slide-in-from-left-2">
-                                            <div className="w-1.5 h-1.5 rounded-full bg-red-400" /> {errors.subDomain}
+                        {step === "VERIFICATION_METHOD" && (
+                            <motion.div
+                                key="verification_method"
+                                initial={{ opacity: 0, y: 10, filter: "blur(4px)" }}
+                                animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+                                exit={{ opacity: 0, x: -20, filter: "blur(4px)" }}
+                                transition={{ duration: 0.4, ease: "easeOut" }}
+                                className="space-y-8 w-full pt-20"
+                            >
+                                <h3 className="text-2xl font-semibold text-white">How do you want to verify?</h3>
+                                {voiceMode && (
+                                    <div className="space-y-2">
+                                        <p className="text-sm text-orange-400/80 animate-pulse">
+                                            Say "policy number" or "mobile number"
+                                        </p>
+                                        {autoListening?.isListening && (
+                                            <div className="flex items-center justify-center gap-2 text-xs text-green-400">
+                                                <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                                                Listening for your response...
+                                            </div>
+                                        )}
+                                    </div>
+                                )}
+                                <div className="grid grid-cols-2 gap-6 max-w-lg mx-auto">
+                                    <Button
+                                        variant="outline"
+                                        className="h-40 flex flex-col gap-4 bg-slate-900/40 border-slate-700/50 hover:bg-blue-900/20 hover:border-blue-500/50 text-slate-300 hover:text-blue-400 transition-all duration-300 group backdrop-blur-sm"
+                                        onClick={() => {
+                                            setVerificationMethod("POLICY");
+                                            nextStep("POLICY_INPUT");
+                                        }}
+                                    >
+                                        <div className="w-16 h-16 rounded-full bg-slate-800/50 group-hover:bg-blue-500/20 flex items-center justify-center transition-colors">
+                                            <ShieldCheck className="w-8 h-8 text-blue-600 group-hover:text-blue-400 transition-colors" />
+                                        </div>
+                                        <span className="text-lg font-medium tracking-wide">Policy Number</span>
+                                    </Button>
+                                    <Button
+                                        variant="outline"
+                                        className="h-40 flex flex-col gap-4 bg-slate-900/40 border-slate-700/50 hover:bg-purple-900/20 hover:border-purple-500/50 text-slate-300 hover:text-purple-400 transition-all duration-300 group backdrop-blur-sm"
+                                        onClick={() => {
+                                            setVerificationMethod("MOBILE");
+                                            nextStep("POLICY_INPUT");
+                                        }}
+                                    >
+                                        <div className="w-16 h-16 rounded-full bg-slate-800/50 group-hover:bg-purple-500/20 flex items-center justify-center transition-colors">
+                                            <div className="w-8 h-8 text-purple-600 group-hover:text-purple-400 transition-colors flex items-center justify-center font-bold text-2xl">#</div>
+                                        </div>
+                                        <span className="text-lg font-medium tracking-wide">Mobile Number</span>
+                                    </Button>
+                                </div>
+                            </motion.div>
+                        )}
+
+                        {step === "POLICY_INPUT" && (
+                            <motion.div
+                                key="policy_input"
+                                initial={{ opacity: 0, x: 50 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                exit={{ opacity: 0, x: -50 }}
+                                className="space-y-6 w-full max-w-md mx-auto pt-20"
+                            >
+                                <h3 className="text-xl font-semibold text-white">
+                                    {verificationMethod === "POLICY" ? "Enter Policy Number" : "Enter Mobile Number"}
+                                </h3>
+                                <div className="space-y-3">
+                                    <div className="relative group">
+                                        <div className="absolute -inset-0.5 bg-gradient-to-r from-orange-500 to-orange-600 rounded-lg blur opacity-20 group-hover:opacity-40 transition duration-500"></div>
+                                        <Input
+                                            placeholder={verificationMethod === "POLICY" ? "e.g. 4005/12345/00/000" : "e.g. 9876543210"}
+                                            className={`relative bg-slate-950/80 text-white text-xl p-8 transition-all border-slate-800 focus:border-orange-500 focus:ring-orange-500/20 placeholder:text-slate-600 ${errors.policyNumber ? "border-red-500/50 focus:border-red-500" : ""}`}
+                                            value={policyNumber}
+                                            maxLength={verificationMethod === "MOBILE" ? 10 : undefined}
+                                            onChange={(e) => {
+                                                const val = e.target.value;
+                                                if (verificationMethod === "MOBILE" && val.length > 10) return;
+                                                setPolicyNumber(val);
+                                                if (errors.policyNumber) setErrors(prev => ({ ...prev, policyNumber: "" }));
+                                            }}
+                                        />
+                                    </div>
+                                    {errors.policyNumber && (
+                                        <p className="text-red-400 text-sm flex items-center gap-2 animate-in slide-in-from-left-2 pl-2">
+                                            <span className="w-1.5 h-1.5 rounded-full bg-red-500 shadow-[0_0_8px_red]" /> {errors.policyNumber}
                                         </p>
                                     )}
                                 </div>
-                            )}
-
-                            {(intelData?.sub_sectors?.length > 0) ? (
                                 <Button
-                                    disabled={!subDomain}
-                                    className="w-full bg-emerald-600 hover:bg-emerald-500 py-6 text-lg shadow-lg shadow-emerald-900/20 disabled:opacity-50 disabled:cursor-not-allowed"
-                                    onClick={() => handleProcessing()}
+                                    className="w-full bg-gradient-to-r from-orange-600 to-orange-500 hover:from-orange-500 hover:to-orange-400 py-8 text-xl font-semibold shadow-lg shadow-orange-900/20 transition-all border border-orange-500/20"
+                                    onClick={() => {
+                                        const error = validateCustomerIdentifier(policyNumber);
+                                        if (error) {
+                                            setErrors(prev => ({ ...prev, policyNumber: error }));
+                                            handleVoice(`Please check your input. ${error}`);
+                                            return;
+                                        }
+                                        setErrors(prev => ({ ...prev, policyNumber: "" }));
+                                        handleProcessing();
+                                    }}
                                 >
-                                    <CheckCircle2 className="mr-2" /> Generate Risk Report
+                                    Verify & Proceed
                                 </Button>
-                            ) : (
+                            </motion.div>
+                        )}
+
+                        {step === "CONFIRMATION" && (
+                            <motion.div
+                                key="confirmation"
+                                initial={{ opacity: 0, scale: 0.95 }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                exit={{ opacity: 0, x: -50 }}
+                                className="space-y-6 w-full max-w-md mx-auto pt-20"
+                            >
+                                <h3 className="text-xl font-semibold text-white">Confirm Details</h3>
+                                <div className="bg-slate-800/50 rounded-xl p-6 space-y-4 text-left border border-slate-700">
+                                    <div>
+                                        <label className="text-xs text-slate-500 uppercase">Company Name</label>
+                                        <p className="text-lg font-bold text-white">{companyName}</p>
+                                    </div>
+                                    <div>
+                                        <label className="text-xs text-slate-500 uppercase">Location</label>
+                                        <p className="text-lg text-white">{location}</p>
+                                    </div>
+                                    <div>
+                                        <label className="text-xs text-slate-500 uppercase">Industry</label>
+                                        <p className="text-lg text-white">{industry}</p>
+                                    </div>
+                                </div>
                                 <Button
                                     className="w-full bg-emerald-600 hover:bg-emerald-500 py-6 text-lg shadow-lg shadow-emerald-900/20"
+                                    onClick={() => handleProcessing()}
+                                >
+                                    <CheckCircle2 className="mr-2" /> Confirm & Analyze
+                                </Button>
+                            </motion.div>
+                        )}
+
+
+                        {step === "INDUSTRY" && (
+                            <motion.div
+                                key="industry"
+                                initial={{ opacity: 0, scale: 0.95 }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                exit={{ opacity: 0, scale: 1.05 }}
+                                className="w-full pt-20"
+                            >
+                                <IndustrySelection
+                                    onSelect={(ind) => {
+                                        console.log('Industry selected:', ind);
+                                        setIndustry(ind);
+                                        nextStep("COMPANY");
+                                    }}
+                                    voiceMode={voiceMode}
+                                />
+                            </motion.div>
+                        )}
+
+                        {step === "COMPANY" && (
+                            <motion.div
+                                key="company"
+                                initial={{ opacity: 0, x: 50 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                exit={{ opacity: 0, x: -50 }}
+                                className="space-y-6 w-full max-w-md mx-auto pt-20"
+                            >
+                                <h3 className="text-xl font-semibold text-white">What is your company name?</h3>
+                                <div className="space-y-3">
+                                    <div className="relative group">
+                                        <div className="absolute -inset-0.5 bg-gradient-to-r from-orange-500 to-orange-600 rounded-lg blur opacity-20 group-hover:opacity-40 transition duration-500"></div>
+                                        <Input
+                                            placeholder="e.g. Acme Corp"
+                                            className={`relative bg-slate-950/80 text-white text-xl p-8 pr-16 transition-all border-slate-800 focus:border-orange-500 focus:ring-orange-500/20 placeholder:text-slate-600 ${errors.companyName ? "border-red-500/50 focus:border-red-500" : ""}`}
+                                            value={companyName}
+                                            onChange={(e) => {
+                                                setCompanyName(e.target.value);
+                                                if (errors.companyName) setErrors(prev => ({ ...prev, companyName: "" }));
+                                            }}
+                                        />
+                                        {/* Mic Button */}
+                                        <button
+                                            onClick={() => toggleRecording("companyName", setCompanyName)}
+                                            className="absolute right-4 top-1/2 -translate-y-1/2 p-2 rounded-full hover:bg-slate-800 transition-colors z-10"
+                                        >
+                                            <Mic className={`w-5 h-5 ${recordingField === "companyName" ? "text-red-500 animate-pulse" : "text-slate-400"}`} />
+                                        </button>
+                                    </div>
+                                    {errors.companyName && (
+                                        <p className="text-red-400 text-sm flex items-center gap-2 animate-in slide-in-from-left-2 pl-2">
+                                            <span className="w-1.5 h-1.5 rounded-full bg-red-500 shadow-[0_0_8px_red]" /> {errors.companyName}
+                                        </p>
+                                    )}
+                                </div>
+                                <Button
+                                    className="w-full bg-gradient-to-r from-orange-600 to-orange-500 hover:from-orange-500 hover:to-orange-400 py-8 text-xl font-semibold shadow-lg shadow-orange-900/20 transition-all border border-orange-500/20"
+                                    onClick={() => handleNextWithValidation("companyName", companyName, "LOCATION", "")}
+                                >
+                                    Next Step
+                                </Button>
+                            </motion.div>
+                        )}
+
+                        {step === "LOCATION" && (
+                            <motion.div
+                                key="location"
+                                initial={{ opacity: 0, x: 50 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                exit={{ opacity: 0, x: -50 }}
+                                className="space-y-6 w-full max-w-md mx-auto pt-20"
+                            >
+                                <h3 className="text-xl font-semibold text-white">Primary Location</h3>
+                                <div className="space-y-2 relative">
+                                    <div className="relative">
+                                        <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 w-5 h-5 pointer-events-none" />
+                                        <Input
+                                            placeholder="City, State, or Pincode"
+                                            className={`bg-slate-900/50 text-white pl-14 pr-16 py-6 text-lg transition-all ${errors.location ? "border-red-500 focus:ring-red-500" : "border-slate-700"}`}
+                                            value={location}
+                                            onChange={(e) => {
+                                                const val = e.target.value;
+                                                setLocation(val);
+                                                if (errors.location) setErrors(prev => ({ ...prev, location: "" }));
+
+                                                if (searchTimeout.current) clearTimeout(searchTimeout.current);
+
+                                                if (val.length > 2) {
+                                                    setIsSearching(true);
+                                                    searchTimeout.current = setTimeout(async () => {
+                                                        try {
+                                                            const res = await fetch(`/api/pincode-lookup?q=${encodeURIComponent(val)}`);
+                                                            const data = await res.json();
+                                                            if (data.results) {
+                                                                setPincodeSuggestions(data.results);
+                                                            }
+                                                        } catch (err) {
+                                                            console.error("Pincode search failed", err);
+                                                        } finally {
+                                                            setIsSearching(false);
+                                                        }
+                                                    }, 400);
+                                                } else {
+                                                    setPincodeSuggestions([]);
+                                                    setIsSearching(false);
+                                                }
+                                            }}
+                                        />
+
+                                        {/* Mic Button */}
+                                        <button
+                                            onClick={() => toggleRecording("location", setLocation, (txt) => handleProcessing({ location: txt }))}
+                                            className="absolute right-4 top-1/2 -translate-y-1/2 p-2 rounded-full hover:bg-slate-800 transition-colors z-10"
+                                        >
+                                            <Mic className={`w-5 h-5 ${recordingField === "location" ? "text-red-500 animate-pulse" : "text-slate-400"}`} />
+                                        </button>
+                                        {pincodeSuggestions.length > 0 && (
+                                            <div className="absolute top-full left-0 right-0 mt-2 bg-slate-900 border border-slate-700 rounded-xl shadow-2xl z-50 overflow-hidden max-h-[300px] overflow-y-auto">
+                                                {pincodeSuggestions.map((item) => (
+                                                    <div
+                                                        key={`${item.pincode}-${item.city}-${item.area}`}
+                                                        className="p-3 hover:bg-slate-800 cursor-pointer flex justify-between items-center transition-colors border-b border-slate-800/50 last:border-0"
+                                                        onClick={() => {
+                                                            if (searchTimeout.current) clearTimeout(searchTimeout.current);
+                                                            setLocation(`${item.area}, ${item.city}, ${item.state} (${item.pincode})`);
+                                                            setPincodeSuggestions([]);
+                                                            setIsSearching(false);
+                                                        }}
+                                                    >
+                                                        <div>
+                                                            <div className="text-white font-medium">{item.area}, {item.city}</div>
+                                                            <div className="text-xs text-slate-400">{item.state}</div>
+                                                        </div>
+                                                        <Badge variant="secondary" className="bg-slate-800 text-slate-300 font-mono text-xs">
+                                                            {item.pincode}
+                                                        </Badge>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        )}
+                                    </div>
+                                    {errors.location && (
+                                        <p className="text-red-400 text-sm flex items-center gap-2 animate-in slide-in-from-left-2">
+                                            <div className="w-1.5 h-1.5 rounded-full bg-red-400" /> {errors.location}
+                                        </p>
+                                    )}
+                                </div>
+                                <Button
+                                    className="w-full bg-icici-orange hover:bg-orange-600 py-6 text-lg"
                                     onClick={() => {
-                                        const error = validateRequired(subDomain, "Sub-domain");
+                                        const error = validateRequired(location, "Location");
                                         if (error) {
-                                            setErrors(prev => ({ ...prev, subDomain: error }));
-                                            handleVoice(`Please check the sub-domain description. ${error}`);
+                                            setErrors(prev => ({ ...prev, location: error }));
                                             return;
                                         }
                                         handleProcessing();
@@ -672,77 +924,169 @@ export const AssessmentWizard: React.FC<AssessmentWizardProps> = ({ onComplete, 
                                 >
                                     <CheckCircle2 className="mr-2" /> Generate Risk Report
                                 </Button>
-                            )}
-                        </motion.div>
-                    )}
+                            </motion.div>
+                        )}
 
-                    {step === "PROCESSING" && (
-                        <motion.div
-                            key="processing"
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            className="flex flex-col items-center justify-center w-full h-full min-h-[400px] flex-1"
-                        >
-                            {/* NEURAL BRAIN LOADER */}
-                            <div className="relative w-48 h-48 flex items-center justify-center mb-8">
-                                {/* Brain Core */}
-                                <motion.div
-                                    animate={{ scale: [1, 1.1, 1], opacity: [0.8, 1, 0.8] }}
-                                    transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-                                    className="absolute inset-0 bg-blue-500/20 rounded-full blur-xl"
-                                />
-                                <motion.div
-                                    animate={{ scale: [1, 1.2, 1], rotate: 180 }}
-                                    transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
-                                    className="absolute w-32 h-32 bg-gradient-to-tr from-blue-400 to-indigo-600 rounded-full blur-md opacity-40"
-                                />
-                                <div className="relative z-10 w-24 h-24 bg-white/10 rounded-full backdrop-blur-md border border-white/20 shadow-[0_0_40px_rgba(59,130,246,0.3)] flex items-center justify-center">
-                                    <div className="w-16 h-16 rounded-full bg-gradient-to-b from-blue-100 to-blue-400 opacity-90 animate-pulse shadow-inner" />
+                        {step === "SUB_DOMAIN" && (
+                            <motion.div
+                                key="sub_domain"
+                                initial={{ opacity: 0, x: 50 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                exit={{ opacity: 0, x: -50 }}
+                                className="space-y-6 w-full max-w-lg mx-auto pt-20"
+                            >
+                                <h3 className="text-xl font-semibold text-white">Operational Sub-domain</h3>
+                                <p className="text-sm text-slate-400">Select your specific domain to unlock tailored recommendations.</p>
+
+                                {loadingIntel ? (
+                                    <div className="flex justify-center py-10">
+                                        <Loader2 className="w-8 h-8 text-orange-500 animate-spin" />
+                                    </div>
+                                ) : intelData?.sub_sectors?.length > 0 ? (
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                        {intelData.sub_sectors.map((sub: string) => (
+                                            <Button
+                                                key={sub}
+                                                variant="outline"
+                                                className={`h-auto py-4 text-left justify-start border-slate-700 bg-slate-900/50 hover:bg-orange-500/10 hover:border-orange-500/50 hover:text-orange-400 transition-all ${subDomain === sub ? "border-orange-500 bg-orange-500/10 text-orange-400" : "text-slate-300"}`}
+                                                onClick={() => {
+                                                    setSubDomain(sub);
+                                                    handleProcessing();
+                                                }}
+                                            >
+                                                <span className="truncate">{sub}</span>
+                                                {subDomain === sub && <CheckCircle2 className="ml-auto w-4 h-4 text-orange-500" />}
+                                            </Button>
+                                        ))}
+                                    </div>
+                                ) : (
+                                    <div className="space-y-2 relative">
+                                        <Input
+                                            placeholder="e.g. Dyeing Unit, Chemical Storage..."
+                                            className={`bg-slate-900/50 text-white text-lg p-6 pr-16 transition-all ${errors.subDomain ? "border-red-500 focus:ring-red-500" : "border-slate-700"}`}
+                                            value={subDomain}
+                                            onChange={(e) => {
+                                                setSubDomain(e.target.value);
+                                                if (errors.subDomain) setErrors(prev => ({ ...prev, subDomain: "" }));
+                                            }}
+                                        />
+                                        {/* Mic Button */}
+                                        <button
+                                            onClick={() => toggleRecording("subDomain", setSubDomain)}
+                                            className="absolute right-4 top-1/2 -translate-y-1/2 p-2 rounded-full hover:bg-slate-800 transition-colors z-10"
+                                        >
+                                            <Mic className={`w-5 h-5 ${recordingField === "subDomain" ? "text-red-500 animate-pulse" : "text-slate-400"}`} />
+                                        </button>
+
+                                        {errors.subDomain && (
+                                            <p className="text-red-400 text-sm flex items-center gap-2 animate-in slide-in-from-left-2">
+                                                <div className="w-1.5 h-1.5 rounded-full bg-red-400" /> {errors.subDomain}
+                                            </p>
+                                        )}
+                                    </div>
+                                )}
+
+                                {(intelData?.sub_sectors?.length > 0) ? (
+                                    <Button
+                                        disabled={!subDomain}
+                                        className="w-full bg-emerald-600 hover:bg-emerald-500 py-6 text-lg shadow-lg shadow-emerald-900/20 disabled:opacity-50 disabled:cursor-not-allowed"
+                                        onClick={() => handleProcessing()}
+                                    >
+                                        <CheckCircle2 className="mr-2" /> Generate Risk Report
+                                    </Button>
+                                ) : (
+                                    <Button
+                                        className="w-full bg-emerald-600 hover:bg-emerald-500 py-6 text-lg shadow-lg shadow-emerald-900/20"
+                                        onClick={() => {
+                                            const error = validateRequired(subDomain, "Sub-domain");
+                                            if (error) {
+                                                setErrors(prev => ({ ...prev, subDomain: error }));
+                                                handleVoice(`Please check the sub-domain description. ${error}`);
+                                                return;
+                                            }
+                                            handleProcessing();
+                                        }}
+                                    >
+                                        <CheckCircle2 className="mr-2" /> Generate Risk Report
+                                    </Button>
+                                )}
+                            </motion.div>
+                        )}
+
+                        {step === "PROCESSING" && (
+                            <motion.div
+                                key="processing"
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                className="flex flex-col items-center justify-center w-full h-full min-h-[400px] flex-1"
+                            >
+                                {/* NEURAL BRAIN LOADER */}
+                                <div className="relative w-48 h-48 flex items-center justify-center mb-8">
+                                    {/* Brain Core */}
+                                    <motion.div
+                                        animate={{ scale: [1, 1.1, 1], opacity: [0.8, 1, 0.8] }}
+                                        transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+                                        className="absolute inset-0 bg-blue-500/20 rounded-full blur-xl"
+                                    />
+                                    <motion.div
+                                        animate={{ scale: [1, 1.2, 1], rotate: 180 }}
+                                        transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
+                                        className="absolute w-32 h-32 bg-gradient-to-tr from-blue-400 to-indigo-600 rounded-full blur-md opacity-40"
+                                    />
+                                    <div className="relative z-10 w-24 h-24 bg-white/10 rounded-full backdrop-blur-md border border-white/20 shadow-[0_0_40px_rgba(59,130,246,0.3)] flex items-center justify-center">
+                                        <div className="w-16 h-16 rounded-full bg-gradient-to-b from-blue-100 to-blue-400 opacity-90 animate-pulse shadow-inner" />
+                                    </div>
+
+                                    {/* Synaptic Ripples */}
+                                    <motion.div
+                                        animate={{ scale: [1, 2], opacity: [0.5, 0] }}
+                                        transition={{ duration: 1.5, repeat: Infinity, ease: "easeOut" }}
+                                        className="absolute inset-0 border border-blue-400/30 rounded-full"
+                                    />
+                                    <motion.div
+                                        animate={{ scale: [1, 2.5], opacity: [0.3, 0] }}
+                                        transition={{ duration: 2, repeat: Infinity, ease: "easeOut", delay: 0.5 }}
+                                        className="absolute inset-0 border border-indigo-400/20 rounded-full"
+                                    />
                                 </div>
 
-                                {/* Synaptic Ripples */}
-                                <motion.div
-                                    animate={{ scale: [1, 2], opacity: [0.5, 0] }}
-                                    transition={{ duration: 1.5, repeat: Infinity, ease: "easeOut" }}
-                                    className="absolute inset-0 border border-blue-400/30 rounded-full"
-                                />
-                                <motion.div
-                                    animate={{ scale: [1, 2.5], opacity: [0.3, 0] }}
-                                    transition={{ duration: 2, repeat: Infinity, ease: "easeOut", delay: 0.5 }}
-                                    className="absolute inset-0 border border-indigo-400/20 rounded-full"
-                                />
-                            </div>
-
-                            <div className="space-y-3 text-center z-10">
-                                <h3 className="text-2xl font-light text-blue-100 tracking-[0.2em] uppercase">
-                                    Leveraging 20 Years of Claims Data
-                                </h3>
-                                <div className="flex flex-col items-center gap-2">
-                                    <p className="text-blue-400/60 font-mono text-xs uppercase tracking-widest flex items-center gap-2">
-                                        <span className="w-1.5 h-1.5 rounded-full bg-blue-400 animate-pulse" />
-                                        Tapping PRRS, RRIT & Billions of Data Points...
-                                    </p>
-                                    <p className="text-slate-500 text-[10px] uppercase tracking-widest">
-                                        Target: {location} • Entity: {companyName || "FabTex Industries"}
-                                    </p>
+                                <div className="space-y-3 text-center z-10">
+                                    <h3 className="text-2xl font-light text-blue-100 tracking-[0.2em] uppercase">
+                                        Leveraging 20 Years of Claims Data
+                                    </h3>
+                                    <div className="flex flex-col items-center gap-2">
+                                        <p className="text-blue-400/60 font-mono text-xs uppercase tracking-widest flex items-center gap-2">
+                                            <span className="w-1.5 h-1.5 rounded-full bg-blue-400 animate-pulse" />
+                                            Tapping PRRS, RRIT & Billions of Data Points...
+                                        </p>
+                                        <p className="text-slate-500 text-[10px] uppercase tracking-widest">
+                                            Target: {location} • Entity: {companyName || "FabTex Industries"}
+                                        </p>
+                                    </div>
                                 </div>
-                            </div>
-                        </motion.div>
-                    )}
-                </AnimatePresence>
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
 
-                {/* Voice Status Indicator */}
-                {isSpeaking && (
-                    <div className="absolute bottom-4 right-4 flex items-center gap-2 bg-black/40 px-3 py-1.5 rounded-full border border-slate-800 backdrop-blur-md">
-                        <div className="flex gap-1 h-3 items-end">
-                            <motion.div animate={{ height: [4, 12, 4] }} transition={{ repeat: Infinity, duration: 0.5 }} className="w-1 bg-orange-500 rounded-full" />
-                            <motion.div animate={{ height: [6, 16, 6] }} transition={{ repeat: Infinity, duration: 0.4, delay: 0.1 }} className="w-1 bg-orange-500 rounded-full" />
-                            <motion.div animate={{ height: [4, 10, 4] }} transition={{ repeat: Infinity, duration: 0.6, delay: 0.2 }} className="w-1 bg-orange-500 rounded-full" />
-                        </div>
-                        <span className="text-[10px] uppercase font-bold text-orange-400 tracking-wider">Listening...</span>
+
+
+
+
+                </Card>
+            </div>
+
+            {/* Voice Listening Indicator - Bottom of Screen */}
+            {voiceMode && autoListening?.isListening && (
+                <div className="fixed bottom-4 left-1/2 -translate-x-1/2 z-[9999] flex items-center gap-2 bg-orange-900/90 px-3 py-2 rounded-full border border-orange-500/50 backdrop-blur-md shadow-lg">
+                    <div className="flex gap-1 h-2 items-end">
+                        <motion.div animate={{ height: [3, 8, 3] }} transition={{ repeat: Infinity, duration: 0.5 }} className="w-0.5 bg-orange-400 rounded-full" />
+                        <motion.div animate={{ height: [4, 10, 4] }} transition={{ repeat: Infinity, duration: 0.4, delay: 0.1 }} className="w-0.5 bg-orange-400 rounded-full" />
+                        <motion.div animate={{ height: [3, 6, 3] }} transition={{ repeat: Infinity, duration: 0.6, delay: 0.2 }} className="w-0.5 bg-orange-400 rounded-full" />
                     </div>
-                )}
-            </Card>
-        </div >
+                    <span className="text-xs font-medium text-orange-100">{isSpeaking ? "Speaking..." : "Listening..."}</span>
+                </div>
+            )}
+
+        </>
     );
 };
