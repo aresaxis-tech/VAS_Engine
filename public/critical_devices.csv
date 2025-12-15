@@ -1,0 +1,11 @@
+DeviceID,DeviceType,Manufacturer,Model,FirmwareVersion,LastPatched,Location,NetworkSegment,AuthMethod,Encryption,OpenPorts,TrafficAnomaly,Criticality,Status,RiskFactor
+CAM-EXT-01,IP Camera,Hikvision,DS-2CD2042WD-I,v5.3.0,2019-03-12,Parking-Lot,Public-Wifi,DefaultPassword,None,80;554,High-Outbound,Medium,Online,AuthWeakness
+DVR-OLD-04,NVR System,Dahua,NVR4104,v3.210,2018-06-20,Guard-Shack,Public-Wifi,DefaultPassword,None,23;80;37777,Botnet-Activity,High,Online,AuthWeakness
+PRT-LEG-02,Laser Printer,Canon,ImageRunner 2520,v1.02,2017-01-15,Back-Office,Corp-Net,None,None,21;23;80,None,Low,Online,OutdatedPatch
+PLC-CRIT-99,Water Pump PLC,Siemens,S7-300,v2.6,2016-05-30,Pump-Station,OT-Network,HardcodedCreds,None,102,Stuxnet-Sig,Critical,Online,VulnerableFirmware
+RTR-GUEST,Wifi Router,TP-Link,Archer C50,v1.0,2020-01-10,Lobby-Guest,Guest-Wifi,WeakPassword,WPA2,80,DNS-Tunneling,Low,Compromised,AuthWeakness
+SRV-DEV-01,Test Server,RaspberryPi,Pi 3 Model B,Linux-4.14,2020-02-20,Lab-Bench,Dev-Test,SSH-Default,SSHv1,22;8080,Crypto-Mining,Low,Online,AuthWeakness
+NAS-BK-02,Storage,QNAP,TS-251,QTS-4.3.3,2021-04-15,IT-Room,Backup-Net,WeakPassword,HTTP,80;8080;443,Ransomware-Activity,High,Encrypted,VulnerableFirmware
+MED-DISP-01,Infusion Pump,B-Braun,Space Station,v1.1,2015-08-30,ICU-Ward,Med-VLAN,None,None,20;21,None,Critical,Online,OutdatedPatch
+DOOR-CTR-03,Smart Lock,Generic,Tuya-Clone,v1.0,Never,Side-Exit,IoT-Wifi,None,None,6667,IRC-Bot-Chat,Medium,Online,AuthWeakness
+THERM-IOT,Smart AC,Unknown,CoolMaster-X,v0.9-beta,Never,Server-Room,Corp-Wifi,DefaultPassword,None,23;80,DDOS-Source,Medium,Online,AuthWeakness

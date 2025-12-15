@@ -1,0 +1,11 @@
+DeviceID,DeviceType,Manufacturer,Model,FirmwareVersion,LastPatched,Location,NetworkSegment,AuthMethod,Encryption,OpenPorts,TrafficAnomaly,Criticality,Status,RiskFactor
+PRT-001,Smart Printer,HP,LaserJet Pro M404,v2.3.1,2024-11-15,Floor-2-Office,Corp-Intranet,WPA3-Enterprise,TLS 1.3,443,None,Low,Online,None
+CAM-102,Security Camera,Axis,M3057-PLVE,v9.80.1,2024-12-01,Lobby-Entrance,Sec-VLAN,Certificate-Based,AES-256,443,None,Medium,Online,None
+HVAC-205,Thermostat,Honeywell,T6 Pro Smart,v3.0.5,2024-10-20,Server-Room,Bldg-Mgmt-VLAN,StrongPassword,TLS 1.2,8883,None,Low,Online,None
+SRV-009,Access Control,HID,Aero X1100,v1.4.2,2024-11-30,Main-Gate,Sec-VLAN,2FA,AES-256,443,None,High,Online,None
+SENS-88,Temp Sensor,Siemens,Desigo PXC4,v4.10,2024-12-05,Warehouse-A,IoT-VLAN,AppKey,DTLS,5684,None,Low,Online,None
+LGT-301,Smart Lighting,Philips,Hue Bridge,v1.55,2024-11-10,Conf-Room-B,IoT-VLAN,OAuth2,TLS 1.2,443,None,Low,Online,None
+UPS-550,Power Supply,APC,Smart-UPS 1500,v4.2,2024-11-25,Rack-4,Mgmt-VLAN,SNMPv3,AES-128,161,None,Medium,Online,None
+VOIP-112,IP Phone,Cisco,8845 Video Phone,v14.1.1,2024-12-02,Reception,Voice-VLAN,Certificate-Based,SRTP,5061,None,Low,Online,None
+RTR-001,Edge Router,Ubiquiti,EdgeRouter 4,v2.0.9,2024-11-28,Comms-Closet,Core-Net,SSH-Key,SSHv2,22,None,Critical,Online,None
+PLC-004,Conveyor Controller,Rockwell,CompactLogix 5380,v32.011,2024-11-05,Production-Line,OT-VLAN,StrongPassword,CIP Security,44818,None,High,Online,None

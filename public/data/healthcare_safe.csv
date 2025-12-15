@@ -1,0 +1,51 @@
+DeviceID,DeviceType,Manufacturer,Model,FirmwareVersion,LastPatched,Location,NetworkSegment,AuthMethod,Encryption,OpenPorts,TrafficAnomaly,Criticality,Status,RiskFactor
+HEA-1000,Infusion Pump,Philips,Model-X0,v2.6,2025-12-11,Zone-1,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+HEA-1001,Patient Monitor,Philips,Model-X53,v1.6,2025-12-11,Zone-1,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+HEA-1002,Lab Analyzer,Philips,Model-Z36,v1.9,2025-12-11,Zone-1,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+HEA-1003,MRI Scanner,Drager,Model-Z64,v0.2,2025-12-11,Zone-1,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+HEA-1004,MRI Scanner,GE Healthcare,Model-X67,v2.6,2025-12-11,Zone-1,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+HEA-1005,X-Ray Machine,Drager,Model-Z31,v3.9,2025-12-11,Zone-1,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+HEA-1006,Patient Monitor,Medtronic,Model-Y89,v2.5,2025-12-11,Zone-1,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+HEA-1007,Patient Monitor,Drager,Model-Z67,v2.1,2025-12-11,Zone-1,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+HEA-1008,Patient Monitor,Medtronic,Model-Y68,v3.0,2025-12-11,Zone-1,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+HEA-1009,Patient Monitor,Philips,Model-Z77,v0.2,2025-12-11,Zone-1,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+HEA-1010,Infusion Pump,Philips,Model-Z64,v4.7,2025-12-11,Zone-2,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+HEA-1011,MRI Scanner,Medtronic,Model-Y99,v1.9,2025-12-11,Zone-2,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+HEA-1012,MRI Scanner,Philips,Model-Z30,v2.2,2025-12-11,Zone-2,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+HEA-1013,Patient Monitor,Philips,Model-X57,v1.1,2025-12-11,Zone-2,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+HEA-1014,Lab Analyzer,Drager,Model-Z97,v0.5,2025-12-11,Zone-2,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+HEA-1015,Lab Analyzer,Medtronic,Model-Y19,v1.2,2025-12-11,Zone-2,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+HEA-1016,X-Ray Machine,Medtronic,Model-Z75,v4.3,2025-12-11,Zone-2,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+HEA-1017,Lab Analyzer,GE Healthcare,Model-Y30,v1.6,2025-12-11,Zone-2,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+HEA-1018,Lab Analyzer,GE Healthcare,Model-X16,v4.1,2025-12-11,Zone-2,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+HEA-1019,Patient Monitor,Medtronic,Model-X78,v2.1,2025-12-11,Zone-2,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+HEA-1020,Infusion Pump,GE Healthcare,Model-Y81,v2.5,2025-12-11,Zone-3,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+HEA-1021,Lab Analyzer,GE Healthcare,Model-Z89,v3.5,2025-12-11,Zone-3,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+HEA-1022,MRI Scanner,Drager,Model-Y76,v0.9,2025-12-11,Zone-3,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+HEA-1023,Infusion Pump,Philips,Model-Y8,v2.4,2025-12-11,Zone-3,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+HEA-1024,MRI Scanner,Medtronic,Model-X52,v2.7,2025-12-11,Zone-3,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+HEA-1025,Infusion Pump,GE Healthcare,Model-Z51,v1.2,2025-12-11,Zone-3,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+HEA-1026,X-Ray Machine,GE Healthcare,Model-X27,v4.2,2025-12-11,Zone-3,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+HEA-1027,Infusion Pump,Drager,Model-Z6,v4.9,2025-12-11,Zone-3,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+HEA-1028,X-Ray Machine,Medtronic,Model-X96,v1.1,2025-12-11,Zone-3,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+HEA-1029,X-Ray Machine,Philips,Model-Z10,v3.2,2025-12-11,Zone-3,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+HEA-1030,Infusion Pump,Drager,Model-Z26,v4.0,2025-12-11,Zone-4,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+HEA-1031,MRI Scanner,Drager,Model-Z24,v1.2,2025-12-11,Zone-4,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+HEA-1032,Patient Monitor,Drager,Model-X12,v4.1,2025-12-11,Zone-4,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+HEA-1033,X-Ray Machine,Drager,Model-X22,v0.0,2025-12-11,Zone-4,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+HEA-1034,Infusion Pump,Drager,Model-Y26,v2.1,2025-12-11,Zone-4,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+HEA-1035,Patient Monitor,Medtronic,Model-Y78,v3.6,2025-12-11,Zone-4,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+HEA-1036,MRI Scanner,GE Healthcare,Model-Y44,v4.8,2025-12-11,Zone-4,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+HEA-1037,Patient Monitor,Drager,Model-X35,v0.9,2025-12-11,Zone-4,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+HEA-1038,Lab Analyzer,GE Healthcare,Model-Y66,v3.7,2025-12-11,Zone-4,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+HEA-1039,X-Ray Machine,GE Healthcare,Model-X35,v0.4,2025-12-11,Zone-4,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+HEA-1040,Patient Monitor,Philips,Model-X10,v1.6,2025-12-11,Zone-5,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+HEA-1041,X-Ray Machine,Medtronic,Model-Z67,v0.3,2025-12-11,Zone-5,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+HEA-1042,Patient Monitor,Philips,Model-X66,v4.8,2025-12-11,Zone-5,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+HEA-1043,Patient Monitor,GE Healthcare,Model-Y17,v1.0,2025-12-11,Zone-5,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+HEA-1044,X-Ray Machine,GE Healthcare,Model-X11,v0.1,2025-12-11,Zone-5,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+HEA-1045,Infusion Pump,Drager,Model-Z62,v1.4,2025-12-11,Zone-5,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+HEA-1046,MRI Scanner,Drager,Model-Y72,v0.3,2025-12-11,Zone-5,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+HEA-1047,Patient Monitor,Drager,Model-Z9,v2.4,2025-12-11,Zone-5,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+HEA-1048,Lab Analyzer,GE Healthcare,Model-Z3,v1.4,2025-12-11,Zone-5,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+HEA-1049,Lab Analyzer,Philips,Model-Z45,v3.6,2025-12-11,Zone-5,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None

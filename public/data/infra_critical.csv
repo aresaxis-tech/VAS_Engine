@@ -1,0 +1,51 @@
+DeviceID,DeviceType,Manufacturer,Model,FirmwareVersion,LastPatched,Location,NetworkSegment,AuthMethod,Encryption,OpenPorts,TrafficAnomaly,Criticality,Status,RiskFactor
+INF-1000,Elevator Control,Otis,Model-Z4,v1.8,2021-01-01,Zone-1,Public-Wifi,DefaultPassword,None,"23, 80, 445",High Outbound,Critical,Compromised,AuthWeakness
+INF-1001,Elevator Control,Siemens,Model-X95,v1.6,2021-01-01,Zone-1,Corporate-LAN,DefaultPassword,None,"23, 80, 445",High Outbound,Critical,Compromised,AuthWeakness
+INF-1002,Building Management System,Siemens,Model-X75,v3.9,2021-01-01,Zone-1,Public-Wifi,DefaultPassword,None,"23, 80, 445",High Outbound,Critical,Compromised,AuthWeakness
+INF-1003,Smart Meter,Honeywell,Model-Y49,v3.8,2021-01-01,Zone-1,Corporate-LAN,DefaultPassword,None,"23, 80, 445",High Outbound,Critical,Compromised,AuthWeakness
+INF-1004,Elevator Control,Siemens,Model-Y66,v4.3,2021-01-01,Zone-1,Public-Wifi,DefaultPassword,None,"23, 80, 445",High Outbound,Critical,Compromised,AuthWeakness
+INF-1005,Traffic Controller,Honeywell,Model-X45,v3.9,2021-01-01,Zone-1,Corporate-LAN,DefaultPassword,None,"23, 80, 445",High Outbound,Critical,Compromised,AuthWeakness
+INF-1006,Building Management System,Siemens,Model-X90,v1.5,2021-01-01,Zone-1,Public-Wifi,DefaultPassword,None,"23, 80, 445",High Outbound,Critical,Compromised,AuthWeakness
+INF-1007,Traffic Controller,Siemens,Model-Z43,v2.0,2021-01-01,Zone-1,Corporate-LAN,DefaultPassword,None,"23, 80, 445",High Outbound,Critical,Compromised,AuthWeakness
+INF-1008,Water Pump SCADA,Honeywell,Model-X70,v2.2,2021-01-01,Zone-1,Public-Wifi,DefaultPassword,None,"23, 80, 445",High Outbound,Critical,Compromised,AuthWeakness
+INF-1009,Elevator Control,Honeywell,Model-Y26,v2.5,2021-01-01,Zone-1,Corporate-LAN,DefaultPassword,None,"23, 80, 445",High Outbound,Critical,Compromised,AuthWeakness
+INF-1010,Smart Meter,Johnson Controls,Model-Z33,v0.3,2021-01-01,Zone-2,Public-Wifi,DefaultPassword,None,"23, 80, 445",High Outbound,Critical,Compromised,AuthWeakness
+INF-1011,Building Management System,Otis,Model-X29,v4.4,2021-01-01,Zone-2,Corporate-LAN,DefaultPassword,None,"23, 80, 445",High Outbound,Critical,Compromised,AuthWeakness
+INF-1012,Building Management System,Honeywell,Model-Z66,v3.9,2021-01-01,Zone-2,Public-Wifi,DefaultPassword,None,"23, 80, 445",High Outbound,Critical,Compromised,AuthWeakness
+INF-1013,Smart Meter,Honeywell,Model-X64,v4.7,2021-01-01,Zone-2,Corporate-LAN,DefaultPassword,None,"23, 80, 445",High Outbound,Critical,Compromised,AuthWeakness
+INF-1014,Elevator Control,Honeywell,Model-Z49,v2.3,2021-01-01,Zone-2,Public-Wifi,DefaultPassword,None,"23, 80, 445",High Outbound,Critical,Compromised,AuthWeakness
+INF-1015,Traffic Controller,Otis,Model-Y20,v3.4,2022-05-15,Zone-2,VLAN-10,WeakPassword,WEP,"80",None,High,Warning,VulnerableFirmware
+INF-1016,Elevator Control,Siemens,Model-Y4,v3.8,2022-05-15,Zone-2,VLAN-10,WeakPassword,WEP,"80",None,High,Warning,VulnerableFirmware
+INF-1017,Traffic Controller,Otis,Model-Z99,v0.5,2022-05-15,Zone-2,VLAN-10,WeakPassword,WEP,"80",None,High,Warning,VulnerableFirmware
+INF-1018,Elevator Control,Otis,Model-Y86,v2.9,2022-05-15,Zone-2,VLAN-10,WeakPassword,WEP,"80",None,High,Warning,VulnerableFirmware
+INF-1019,Traffic Controller,Siemens,Model-X66,v1.9,2022-05-15,Zone-2,VLAN-10,WeakPassword,WEP,"80",None,High,Warning,VulnerableFirmware
+INF-1020,Elevator Control,Honeywell,Model-X43,v4.4,2022-05-15,Zone-3,VLAN-10,WeakPassword,WEP,"80",None,High,Warning,VulnerableFirmware
+INF-1021,Water Pump SCADA,Siemens,Model-Y8,v4.1,2022-05-15,Zone-3,VLAN-10,WeakPassword,WEP,"80",None,High,Warning,VulnerableFirmware
+INF-1022,Building Management System,Honeywell,Model-X68,v3.4,2022-05-15,Zone-3,VLAN-10,WeakPassword,WEP,"80",None,High,Warning,VulnerableFirmware
+INF-1023,Elevator Control,Otis,Model-Y57,v1.7,2022-05-15,Zone-3,VLAN-10,WeakPassword,WEP,"80",None,High,Warning,VulnerableFirmware
+INF-1024,Water Pump SCADA,Honeywell,Model-Z72,v0.4,2022-05-15,Zone-3,VLAN-10,WeakPassword,WEP,"80",None,High,Warning,VulnerableFirmware
+INF-1025,Water Pump SCADA,Siemens,Model-X53,v4.5,2025-12-11,Zone-3,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+INF-1026,Smart Meter,Siemens,Model-Z19,v1.3,2025-12-11,Zone-3,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+INF-1027,Building Management System,Honeywell,Model-X64,v0.4,2025-12-11,Zone-3,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+INF-1028,Elevator Control,Otis,Model-Z23,v4.1,2025-12-11,Zone-3,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+INF-1029,Elevator Control,Siemens,Model-X96,v1.4,2025-12-11,Zone-3,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+INF-1030,Building Management System,Honeywell,Model-Z26,v2.3,2025-12-11,Zone-4,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+INF-1031,Water Pump SCADA,Siemens,Model-X25,v1.9,2025-12-11,Zone-4,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+INF-1032,Building Management System,Otis,Model-Z18,v2.8,2025-12-11,Zone-4,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+INF-1033,Building Management System,Siemens,Model-Y36,v4.3,2025-12-11,Zone-4,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+INF-1034,Elevator Control,Siemens,Model-X94,v0.4,2025-12-11,Zone-4,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+INF-1035,Elevator Control,Honeywell,Model-Y72,v4.2,2025-12-11,Zone-4,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+INF-1036,Elevator Control,Siemens,Model-Z18,v4.2,2025-12-11,Zone-4,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+INF-1037,Smart Meter,Johnson Controls,Model-X21,v3.5,2025-12-11,Zone-4,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+INF-1038,Elevator Control,Johnson Controls,Model-Y57,v0.4,2025-12-11,Zone-4,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+INF-1039,Smart Meter,Honeywell,Model-Z1,v1.6,2025-12-11,Zone-4,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+INF-1040,Elevator Control,Siemens,Model-X40,v3.4,2025-12-11,Zone-5,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+INF-1041,Smart Meter,Johnson Controls,Model-X51,v0.3,2025-12-11,Zone-5,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+INF-1042,Elevator Control,Otis,Model-Z50,v4.7,2025-12-11,Zone-5,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+INF-1043,Elevator Control,Siemens,Model-X35,v3.5,2025-12-11,Zone-5,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+INF-1044,Traffic Controller,Siemens,Model-X33,v4.2,2025-12-11,Zone-5,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+INF-1045,Water Pump SCADA,Otis,Model-X46,v1.8,2025-12-11,Zone-5,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+INF-1046,Traffic Controller,Siemens,Model-Z25,v1.0,2025-12-11,Zone-5,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+INF-1047,Traffic Controller,Siemens,Model-Z77,v3.4,2025-12-11,Zone-5,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+INF-1048,Water Pump SCADA,Johnson Controls,Model-Z88,v2.7,2025-12-11,Zone-5,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None
+INF-1049,Smart Meter,Siemens,Model-Z24,v1.8,2025-12-11,Zone-5,Secure-VLAN,MFA/Cert,AES-256,"443",None,Low,Active,None

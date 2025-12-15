@@ -1,0 +1,6 @@
+flask
+flask-cors
+openai
+duckduckgo_search
+python-dotenv
+certifi
